@@ -3,53 +3,104 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="/static/manifest.json">
 <title>Marketing CRM</title>
+
 <style>
-body{font-family:Arial;margin:0;background:#eef1f5}
-.sidebar{width:200px;height:100vh;background:#1f2937;color:white;position:fixed;padding:20px}
-.sidebar a{display:block;color:white;text-decoration:none;margin:10px 0}
-.main{margin-left:220px;padding:30px}
-.cards{display:flex;gap:20px;margin-bottom:20px}
-.card{background:white;padding:20px;border-radius:10px}
+body{
+font-family:Arial;
+margin:0;
+background:#eef1f5;
+}
+
+.header{
+background:#1f2937;
+color:white;
+padding:18px;
+font-size:24px;
+text-align:center;
+}
+
+.container{
+padding:15px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-bottom:15px;
+}
+
+.card{
+background:white;
+padding:18px;
+border-radius:12px;
+text-align:center;
+font-size:20px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.button{
+display:block;
+width:100%;
+background:#2563eb;
+color:white;
+padding:16px;
+border-radius:12px;
+text-align:center;
+text-decoration:none;
+font-size:20px;
+margin-bottom:12px;
+}
+
+.list{
+background:white;
+padding:18px;
+border-radius:12px;
+}
+
+.list li{
+margin-bottom:10px;
+font-size:18px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="sidebar">
-<h2>CRM</h2>
-<a href="/">Dashboard</a>
-<a href="/add">Add Office</a>
-<a href="/quick_referral">Quick Referral</a>
-<a href="/map">Office Map</a>
-<a href="/backup">Backup</a>
+<div class="header">
+Marketing CRM
 </div>
 
-<div class="main">
-
-<h1>Dashboard</h1>
+<div class="container">
 
 <div class="cards">
-<div class="card">Offices<br>{{total_offices}}</div>
-<div class="card">Visits<br>{{total_visits}}</div>
-<div class="card">Referrals<br>{{total_refs}}</div>
+<div class="card">
+Offices<br>
+{{total_offices}}
 </div>
 
+<div class="card">
+Referrals<br>
+{{total_refs}}
+</div>
+</div>
+
+<a class="button" href="/quick_referral">Quick Referral</a>
+<a class="button" href="/add">Add Office</a>
+<a class="button" href="/map">Office Map</a>
+<a class="button" href="/backup">Download Backup</a>
+
+<div class="list">
 <h3>Next Offices to Visit</h3>
 <ul>
 {% for n in next_visits %}
 <li>{{n}}</li>
 {% endfor %}
 </ul>
-
-<h3>Top Conversion Offices</h3>
-<ul>
-{% for p in predictions %}
-<li>{{p[0]}} — {{p[1]}}%</li>
-{% endfor %}
-</ul>
+</div>
 
 </div>
+
 </body>
 </html>

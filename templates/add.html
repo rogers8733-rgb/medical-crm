@@ -1,19 +1,52 @@
 
 <!DOCTYPE html>
 <html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add Office</title>
+
+<style>
+body{font-family:Arial;margin:0;background:#eef1f5;padding:20px;}
+h1{text-align:center;}
+input,select,textarea{
+width:100%;
+padding:14px;
+font-size:18px;
+margin-bottom:14px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+button{
+width:100%;
+padding:16px;
+font-size:20px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:10px;
+}
+</style>
+</head>
+
 <body>
 
 <h1>Add Office</h1>
 
 <form method="POST">
 
-Office<br><input name="office"><br><br>
-MD<br><input name="md"><br><br>
-Phone<br><input name="phone"><br><br>
+Office
+<input name="office">
 
-Address<br><input name="address"><br><br>
+MD
+<input name="md">
 
-Class<br>
+Phone
+<input name="phone">
+
+Address
+<input name="address">
+
+Class
 <select name="classification">
 <option>A</option>
 <option>B</option>
@@ -21,14 +54,10 @@ Class<br>
 <option>D</option>
 </select>
 
-<br><br>
-
-Notes<br>
+Notes
 <textarea name="notes"></textarea>
 
-<br><br>
-
-<button>Save</button>
+<button>Save Office</button>
 
 </form>
 
