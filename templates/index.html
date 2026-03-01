@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medical Referral CRM</title>
+</head>
+<body>
+    <h1>Medical Referral Marketing Dashboard</h1>
+
+    <a href="/add">Add Office</a>
+    <hr>
+
+    <h2>Follow-Ups Due</h2>
+
+    <table border="1">
+        <tr>
+            <th>Office</th>
+            <th>Classification</th>
+            <th>Last Visit</th>
+            <th>Next Follow-Up</th>
+            <th>Action</th>
+        </tr>
+
+        {% for office in offices %}
+        <tr {% if office[7] <= today %} style="background-color: #ffcccc;" {% endif %}>
+            <td>{{ office[1] }}</td>
+            <td>{{ office[5] }}</td>
+            <td>{{ office[6] }}</td>
+            <td>{{ office[7] }}</td>
+            <td>
+                <a href="/log_visit/{{ office[0] }}">Log Visit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
