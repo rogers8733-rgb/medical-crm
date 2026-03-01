@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Log Referral</h1>
+
+<form method="POST">
+
+Office<br>
+<select name="office">
+{% for o in offices %}
+<option {% if selected==o[0] %}selected{% endif %}>{{o[0]}}</option>
+{% endfor %}
+</select>
+
+<br><br>
+
+Referral Type<br>
+<select name="rtype">
+<option>Group 3 Power Chair</option>
+<option>Group 2 Power Chair</option>
+<option>Scooter</option>
+<option>Custom Manual</option>
+<option>Ultralight Manual</option>
+<option>Seating Evaluation</option>
+<option>Other</option>
+</select>
+
+<br><br>
+
+Notes<br>
+<textarea name="notes"></textarea>
+
+<br><br>
+
+<button>Save Referral</button>
+
+</form>
+
+</body>
+</html>

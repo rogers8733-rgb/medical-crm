@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Visit Log</title>
+</head>
+
+<body>
+
+<h1>Visit Log</h1>
+
+<table>
+
+<tr>
+<th>Office</th>
+<th>Date</th>
+<th>Notes</th>
+</tr>
+
+{% for v in visits %}
+
+<tr>
+<td>{{v[0]}}</td>
+<td>{{v[1]}}</td>
+<td>{{v[2]}}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<a href="/">Back</a>
+
+</body>
+</html>

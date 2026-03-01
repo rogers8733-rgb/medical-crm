@@ -1,39 +1,36 @@
+
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Add Office</title>
-</head>
 <body>
-    <h1>Add Medical Referral Office</h1>
 
-    <form method="POST">
-        Office Name:
-        <input type="text" name="office_name" required><br><br>
+<h1>Add Office</h1>
 
-        MD Name:
-        <input type="text" name="md_name"><br><br>
+<form method="POST">
 
-        Referral Coordinator:
-        <input type="text" name="coordinator"><br><br>
+Office<br><input name="office"><br><br>
+MD<br><input name="md"><br><br>
+Phone<br><input name="phone"><br><br>
 
-        Phone:
-        <input type="text" name="phone"><br><br>
+Address<br><input name="address"><br><br>
 
-        Classification:
-        <select name="classification">
-            <option value="A">A - High Priority</option>
-            <option value="B">B - Medium</option>
-            <option value="C">C - Low</option>
-            <option value="D">D - Minimal</option>
-        </select><br><br>
+Class<br>
+<select name="classification">
+<option>A</option>
+<option>B</option>
+<option>C</option>
+<option>D</option>
+</select>
 
-        Notes:<br>
-        <textarea name="notes"></textarea><br><br>
+<br><br>
 
-        <button type="submit">Save</button>
-    </form>
+Notes<br>
+<textarea name="notes"></textarea>
 
-    <br>
-    <a href="/">Back to Dashboard</a>
+<br><br>
+
+<button>Save</button>
+
+</form>
+
 </body>
 </html>

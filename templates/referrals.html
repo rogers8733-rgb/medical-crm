@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Referral Log</title>
+</head>
+
+<body>
+
+<h1>Referral Log</h1>
+
+<table>
+
+<tr>
+<th>Office</th>
+<th>Date</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+
+{% for r in refs %}
+
+<tr>
+<td>{{r[0]}}</td>
+<td>{{r[1]}}</td>
+<td>{{r[2]}}</td>
+<td>{{r[3]}}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<a href="/">Back</a>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Today's Stops</title>
+</head>
+
+<body>
+
+<h1>Today's Marketing Stops</h1>
+
+<ul>
+{% for a in accounts %}
+<li>{{a[0]}} ({{a[1]}})</li>
+{% endfor %}
+</ul>
+
+<a href="/">Back</a>
+
+</body>
+</html>

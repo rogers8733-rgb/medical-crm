@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Quick Referral Entry</h1>
+
+<form method="POST">
+
+Office<br>
+<select name="office">
+{% for o in offices %}
+<option>{{o[0]}}</option>
+{% endfor %}
+</select>
+
+<br><br>
+
+Type<br>
+<select name="rtype">
+<option>Group 3 Power Chair</option>
+<option>Group 2 Power Chair</option>
+<option>Scooter</option>
+<option>Custom Manual</option>
+</select>
+
+<br><br>
+
+<button>Log Referral</button>
+
+</form>
+
+</body>
+</html>

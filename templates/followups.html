@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Follow Ups</title>
+</head>
+
+<body>
+
+<h1>A-Level Offices Needing Follow Up</h1>
+
+<ul>
+{% for a in accounts %}
+<li>{{a[0]}} ({{a[1]}})</li>
+{% endfor %}
+</ul>
+
+<a href="/">Back</a>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Office</title>
+</head>
+<body>
+
+<h1>{{office}}</h1>
+
+<b>Total Visits:</b> {{visit_count}}<br>
+<b>Total Referrals:</b> {{ref_count}}<br>
+<b>Conversion Rate:</b> {{conversion}}%
+
+<br><br>
+
+<a href="/visit/{{office}}">Log Visit</a>
+<a href="/referral?office={{office}}">Log Referral</a>
+
+<h2>Referral Types</h2>
+<ul>
+{% for t in type_summary %}
+<li>{{t}} : {{type_summary[t]}}</li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
