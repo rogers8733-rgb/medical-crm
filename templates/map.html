@@ -3,29 +3,67 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Office Route Planner</title>
+<title>Office Map</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+body{font-family:Arial;margin:0}
+#map{height:90vh;width:100%}
+.header{padding:12px;background:#1f2937;color:white;text-align:center}
+</style>
 </head>
 
-<body style="font-family:Arial;padding:20px;">
+<body>
 
-<a href="/">⬅ Home</a>
+<div class="header">
+<a href="/" style="color:white;text-decoration:none;">⬅ Home</a>
+&nbsp;&nbsp; Office Map
+</div>
 
-<h2>Office Route Planner</h2>
+<div id="map"></div>
 
-<ul>
+<script>
 
-{% for o in offices %}
+var map = L.map('map').setView([34.7304, -86.5861], 10);
 
-<li>
-<b>{{o[0]}}</b><br>
-<a href="https://www.google.com/maps/search/{{o[1]}}" target="_blank">{{o[1]}}</a>
-</li>
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
 
-<br>
+var offices = {{ offices|tojson }};
 
-{% endfor %}
+offices.forEach(function(o){
 
-</ul>
+    if(o.length > 6){
+
+        var name = o[0];
+        var address = o[6];
+
+        fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address))
+        .then(res => res.json())
+        .then(data => {
+
+            if(data.length > 0){
+
+                var lat = data[0].lat;
+                var lon = data[0].lon;
+
+                var marker = L.marker([lat,lon]).addTo(map);
+
+                marker.bindPopup("<b>" + name + "</b><br>" + address +
+                "<br><a target='_blank' href='https://www.google.com/maps/search/" + address + "'>Directions</a>");
+
+            }
+
+        });
+
+    }
+
+});
+
+</script>
 
 </body>
 </html>
