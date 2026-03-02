@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, send_file
 import csv, os, zipfile
 from datetime import datetime, timedelta
@@ -106,6 +107,11 @@ def add():
         return redirect("/")
 
     return render_template("add.html")
+
+
+@app.route("/map")
+def map_page():
+    return render_template("map.html")
 
 
 @app.route("/backup")

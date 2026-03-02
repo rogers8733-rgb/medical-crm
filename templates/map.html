@@ -2,25 +2,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Office Map</title>
 </head>
 
-<body>
+<body style="font-family:Arial;padding:20px;">
 
-<div id="map" style="height:90vh"></div>
+<a href="/">⬅ Home</a>
 
-<script>
-var map=L.map('map').setView([34.8,-86.6],10);
+<h1>Office Map</h1>
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-{% for o in offices %}
-var marker=L.marker([34.8,-86.6]).addTo(map)
-.bindPopup("{{o[0]}}");
-{% endfor %}
-
-</script>
+<p>Map feature coming soon.</p>
 
 </body>
 </html>
