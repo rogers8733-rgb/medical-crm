@@ -1,40 +1,39 @@
 
 <!DOCTYPE html>
 <html>
-<body>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log Referral</title>
+</head>
 
-<h1>Log Referral</h1>
+<body style="font-family:Arial;padding:20px;">
+
+<a href="/">⬅ Home</a>
+
+<h2>Log Referral</h2>
 
 <form method="POST">
 
 Office<br>
-<select name="office">
+<select name="office" style="width:100%;padding:10px;">
 {% for o in offices %}
-<option {% if selected==o[0] %}selected{% endif %}>{{o[0]}}</option>
+<option>{{o[0]}}</option>
 {% endfor %}
-</select>
-
-<br><br>
+</select><br><br>
 
 Referral Type<br>
-<select name="rtype">
+<select name="rtype" style="width:100%;padding:10px;">
 <option>Group 3 Power Chair</option>
 <option>Group 2 Power Chair</option>
 <option>Scooter</option>
 <option>Custom Manual</option>
-<option>Ultralight Manual</option>
-<option>Seating Evaluation</option>
 <option>Other</option>
-</select>
-
-<br><br>
+</select><br><br>
 
 Notes<br>
-<textarea name="notes"></textarea>
+<textarea name="notes" style="width:100%;padding:10px;"></textarea><br><br>
 
-<br><br>
-
-<button>Save Referral</button>
+<button style="padding:14px;">Save Referral</button>
 
 </form>
 

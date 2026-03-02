@@ -4,58 +4,29 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Add Office</title>
-
-<style>
-body{font-family:Arial;background:#eef1f5;padding:20px;}
-input,select,textarea{
-width:100%;
-padding:16px;
-font-size:20px;
-margin-bottom:16px;
-}
-button{
-width:100%;
-padding:18px;
-font-size:22px;
-background:#2563eb;
-color:white;
-border:none;
-}
-</style>
 </head>
 
-<body>
+<body style="font-family:Arial;padding:20px;">
 
 <a href="/">⬅ Home</a>
 
-<h1>Add Office</h1>
+<h2>Add New Office</h2>
 
 <form method="POST">
 
-Office
-<input name="office">
+Office / Doctor Name<br>
+<input name="office" style="width:100%;padding:10px;"><br><br>
 
-MD
-<input name="md">
+Phone<br>
+<input name="phone" style="width:100%;padding:10px;"><br><br>
 
-Phone
-<input name="phone">
+Address<br>
+<input name="address" style="width:100%;padding:10px;"><br><br>
 
-Address
-<input name="address">
+Notes<br>
+<textarea name="notes" style="width:100%;padding:10px;"></textarea><br><br>
 
-Class
-<select name="classification">
-<option>A</option>
-<option>B</option>
-<option>C</option>
-<option>D</option>
-</select>
-
-Notes
-<textarea name="notes"></textarea>
-
-<button>Save Office</button>
+<button style="padding:14px;">Save</button>
 
 </form>
 
