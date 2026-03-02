@@ -48,7 +48,6 @@ def index():
     weekly = []
     for o in offices:
         name = o[0]
-
         last = last_visit(name, visits)
 
         days = 999
@@ -87,6 +86,30 @@ def analytics():
 def map_page():
     offices = read_csv(OFFICE_FILE)
     return render_template("map.html", offices=offices)
+
+@app.route("/import", methods=["GET","POST"])
+def import_offices():
+    if request.method == "POST":
+        file = request.files.get("file")
+        if file:
+            data = file.read().decode("utf-8").splitlines()
+            reader = csv.reader(data)
+
+            today = datetime.today().strftime("%Y-%m-%d")
+
+            for row in reader:
+                if len(row) >= 4:
+                    office = row[0]
+                    md = row[1]
+                    phone = row[2]
+                    address = row[3]
+                    notes = row[4] if len(row) > 4 else ""
+
+                    append_csv(OFFICE_FILE,[office,md,phone,"C",today,notes,address])
+
+        return redirect("/")
+
+    return render_template("import.html")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT",10000))
