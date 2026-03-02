@@ -12,10 +12,11 @@
 
 <h2>Log Referral</h2>
 
+<input id="search" placeholder="Search office..." style="width:100%;padding:10px;margin-bottom:10px;">
+
 <form method="POST">
 
-Office<br>
-<select name="office" style="width:100%;padding:10px;">
+<select name="office" id="office" style="width:100%;padding:10px;">
 {% for o in offices %}
 <option>{{o[0]}}</option>
 {% endfor %}
@@ -36,6 +37,17 @@ Notes<br>
 <button style="padding:14px;">Save Referral</button>
 
 </form>
+
+<script>
+document.getElementById("search").addEventListener("keyup", function(){
+var filter=this.value.toLowerCase();
+var options=document.getElementById("office").options;
+for(let i=0;i<options.length;i++){
+var txt=options[i].text.toLowerCase();
+options[i].style.display=txt.includes(filter)?"":"none";
+}
+});
+</script>
 
 </body>
 </html>

@@ -4,7 +4,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Marketing CRM</title>
-
 <style>
 body{font-family:Arial;background:#eef1f5;margin:0}
 .header{background:#1f2937;color:white;padding:18px;text-align:center;font-size:24px}
@@ -22,19 +21,7 @@ body{font-family:Arial;background:#eef1f5;margin:0}
 
 <a class="button" href="/visits">Log Visit</a>
 <a class="button" href="/referral">Log Referral</a>
-<a class="button" href="/add">Add Office</a>
-<a class="button" href="/analytics">Marketing Analytics</a>
-<a class="button" href="/map">Route Planner</a>
-<a class="button" href="/import">Import Offices</a>
-
-<div class="card">
-<h3>Suggested Offices This Week</h3>
-<ul>
-{% for w in weekly %}
-<li>{{w[0]}} — {{w[1]}} days since visit</li>
-{% endfor %}
-</ul>
-</div>
+<a class="button" href="/planner">Where Should I Go This Week?</a>
 
 <div class="card">
 <h3>Top Referral Sources</h3>

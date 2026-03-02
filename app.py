@@ -2,13 +2,12 @@
 from flask import Flask, render_template, request, redirect
 import csv, os
 from datetime import datetime
-from collections import defaultdict
 
 app = Flask(__name__)
 
-OFFICE_FILE = "accounts.csv"
-VISIT_FILE = "visits.csv"
-REF_FILE = "referrals.csv"
+OFFICE_FILE="accounts.csv"
+VISIT_FILE="visits.csv"
+REF_FILE="referrals.csv"
 
 def read_csv(file):
     rows=[]
@@ -28,8 +27,7 @@ def append_csv(file,row):
 
 def last_visit(name,visits):
     v=[x for x in visits if x[0]==name]
-    if v:
-        return v[-1][1]
+    if v: return v[-1][1]
     return None
 
 @app.route("/")
@@ -38,44 +36,52 @@ def index():
     visits=read_csv(VISIT_FILE)
     refs=read_csv(REF_FILE)
 
-    ref_counts=defaultdict(int)
+    ref_count={}
     for r in refs:
-        if len(r)>0:
-            ref_counts[r[0]]+=1
+        if r:
+            ref_count[r[0]]=ref_count.get(r[0],0)+1
 
-    leaderboard=sorted(ref_counts.items(), key=lambda x:x[1], reverse=True)[:5]
+    leaderboard=sorted(ref_count.items(),key=lambda x:x[1],reverse=True)[:5]
 
-    weekly=[]
+    return render_template("index.html",leaderboard=leaderboard)
+
+@app.route("/planner")
+def planner():
+    offices=read_csv(OFFICE_FILE)
+    visits=read_csv(VISIT_FILE)
+
+    results=[]
+
     for o in offices:
         name=o[0]
         last=last_visit(name,visits)
 
+        days=999
         if last:
             try:
                 d=datetime.strptime(last,"%Y-%m-%d")
                 days=(datetime.today()-d).days
-                weekly.append((name,days))
             except:
                 pass
 
-    weekly=sorted(weekly,key=lambda x:x[1],reverse=True)[:5]
+        results.append((name,days))
 
-    return render_template("index.html",weekly=weekly,leaderboard=leaderboard)
+    results=sorted(results,key=lambda x:x[1],reverse=True)[:15]
 
-@app.route("/add",methods=["GET","POST"])
-def add():
+    return render_template("planner.html",results=results)
+
+@app.route("/visits",methods=["GET","POST"])
+def visits():
+    offices=read_csv(OFFICE_FILE)
+
     if request.method=="POST":
         office=request.form["office"]
-        phone=request.form["phone"]
-        address=request.form["address"]
-        notes=request.form["notes"]
-
+        note=request.form["note"]
         today=datetime.today().strftime("%Y-%m-%d")
-
-        append_csv(OFFICE_FILE,[office,"",phone,"C",today,notes,address])
+        append_csv(VISIT_FILE,[office,today,note])
         return redirect("/")
 
-    return render_template("add.html")
+    return render_template("visits.html",offices=offices)
 
 @app.route("/referral",methods=["GET","POST"])
 def referral():
@@ -86,56 +92,10 @@ def referral():
         rtype=request.form["rtype"]
         notes=request.form["notes"]
         today=datetime.today().strftime("%Y-%m-%d")
-
         append_csv(REF_FILE,[office,today,rtype,notes])
         return redirect("/")
 
     return render_template("referral.html",offices=offices)
-
-@app.route("/visits",methods=["GET","POST"])
-def visits():
-    offices=read_csv(OFFICE_FILE)
-
-    if request.method=="POST":
-        office=request.form["office"]
-        note=request.form["note"]
-        today=datetime.today().strftime("%Y-%m-%d")
-
-        append_csv(VISIT_FILE,[office,today,note])
-        return redirect("/")
-
-    return render_template("visits.html",offices=offices)
-
-@app.route("/analytics")
-def analytics():
-    return render_template("analytics.html")
-
-@app.route("/map")
-def map_page():
-    offices=read_csv(OFFICE_FILE)
-    return render_template("map.html",offices=offices)
-
-@app.route("/import",methods=["GET","POST"])
-def import_offices():
-    if request.method=="POST":
-        file=request.files.get("file")
-        if file:
-            data=file.read().decode("utf-8").splitlines()
-            reader=csv.reader(data)
-            today=datetime.today().strftime("%Y-%m-%d")
-
-            for row in reader:
-                if len(row)>=4:
-                    office=row[0]
-                    phone=row[1]
-                    address=row[2]
-                    notes=row[3] if len(row)>3 else ""
-
-                    append_csv(OFFICE_FILE,[office,"",phone,"C",today,notes,address])
-
-        return redirect("/")
-
-    return render_template("import.html")
 
 if __name__=="__main__":
     port=int(os.environ.get("PORT",10000))

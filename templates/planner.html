@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Planner</title>
+</head>
+
+<body style="font-family:Arial;padding:20px;">
+
+<a href="/">⬅ Home</a>
+
+<h2>Suggested Offices To Visit</h2>
+
+<ul>
+{% for r in results %}
+<li>{{r[0]}} — {{r[1]}} days since last visit</li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
