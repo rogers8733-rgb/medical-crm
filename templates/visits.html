@@ -2,34 +2,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Visit Log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log Visit</title>
 </head>
 
-<body>
+<body style="font-family:Arial;padding:20px;">
 
-<h1>Visit Log</h1>
+<a href="/">⬅ Home</a>
 
-<table>
+<h1>Log Visit</h1>
 
-<tr>
-<th>Office</th>
-<th>Date</th>
-<th>Notes</th>
-</tr>
+<form method="POST">
 
-{% for v in visits %}
+Office<br>
+<select name="office">
 
-<tr>
-<td>{{v[0]}}</td>
-<td>{{v[1]}}</td>
-<td>{{v[2]}}</td>
-</tr>
-
+{% for o in offices %}
+<option>{{o[0]}}</option>
 {% endfor %}
 
-</table>
+</select>
 
-<a href="/">Back</a>
+<br><br>
+
+Notes<br>
+<textarea name="note" style="width:100%;height:80px;"></textarea>
+
+<br><br>
+
+<button style="width:100%;padding:14px;">Save Visit</button>
+
+</form>
 
 </body>
 </html>
