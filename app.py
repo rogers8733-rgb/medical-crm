@@ -10,7 +10,7 @@ OFFICE_FILE = "accounts.csv"
 VISIT_FILE = "visits.csv"
 REF_FILE = "referrals.csv"
 
-RULES = {"A":14,"B":30,"C":60,"D":120}
+VISIT_RULES = {"A":14,"B":30,"C":60,"D":120}
 
 def read_csv(file):
     rows=[]
@@ -34,6 +34,15 @@ def last_visit(name,visits):
         return v[-1][1]
     return None
 
+def auto_class(refs):
+    if refs >= 5:
+        return "A"
+    elif refs >= 3:
+        return "B"
+    elif refs >= 1:
+        return "C"
+    return "D"
+
 @app.route("/")
 def index():
 
@@ -41,48 +50,55 @@ def index():
     visits=read_csv(VISIT_FILE)
     refs=read_csv(REF_FILE)
 
-    next_visits=[]
-    leaderboard=defaultdict(int)
     visit_counts=defaultdict(int)
+    ref_counts=defaultdict(int)
 
     for v in visits:
-        visit_counts[v[0]]+=1
+        visit_counts[v[0]] += 1
 
     for r in refs:
-        leaderboard[r[0]]+=1
+        ref_counts[r[0]] += 1
 
-    conversion=[]
+    leaderboard=[]
+    weekly=[]
+    nearby=[]
 
     for o in offices:
         name=o[0]
 
+        ref_total=ref_counts[name]
+        visit_total=visit_counts[name]
+
+        cls=auto_class(ref_total)
+
+        conv=0
+        if visit_total>0:
+            conv=round((ref_total/visit_total)*100,1)
+
+        leaderboard.append((name,ref_total,conv))
+
         last=last_visit(name,visits)
 
+        days=999
         if last:
             d=datetime.strptime(last,"%Y-%m-%d")
-            due=d+timedelta(days=RULES.get(o[3],60))
-            if due<=datetime.today():
-                next_visits.append(name)
-        else:
-            next_visits.append(name)
+            days=(datetime.today()-d).days
 
-        visits_total=visit_counts[name]
-        refs_total=leaderboard[name]
+        score=days + (ref_total*5)
 
-        pct=0
-        if visits_total>0:
-            pct=round((refs_total/visits_total)*100,1)
+        weekly.append((name,score,days,cls))
 
-        conversion.append((name,refs_total,pct))
+        nearby.append((name,days))
 
-    conversion=sorted(conversion,key=lambda x:x[1],reverse=True)
+    leaderboard=sorted(leaderboard,key=lambda x:x[1],reverse=True)[:5]
+    weekly=sorted(weekly,key=lambda x:x[1],reverse=True)[:5]
+    nearby=sorted(nearby,key=lambda x:x[1],reverse=True)[:5]
 
     return render_template(
         "index.html",
-        total_offices=len(offices),
-        total_refs=len(refs),
-        next_visits=next_visits,
-        leaderboard=conversion[:5]
+        leaderboard=leaderboard,
+        weekly=weekly,
+        nearby=nearby
     )
 
 @app.route("/visits",methods=["GET","POST"])
@@ -95,7 +111,7 @@ def visits():
         note=request.form["note"]
         today=datetime.today().strftime("%Y-%m-%d")
         append_csv(VISIT_FILE,[office,today,note])
-        return redirect("/visits")
+        return redirect("/")
 
     return render_template("visits.html",offices=offices)
 
@@ -108,7 +124,7 @@ def quick():
         office=request.form["office"]
         rtype=request.form["rtype"]
         today=datetime.today().strftime("%Y-%m-%d")
-        append_csv(REF_FILE,[office,today,rtype,""])
+        append_csv(REF_FILE,[office,today,rtype])
         return redirect("/")
 
     return render_template("quick.html",offices=offices)
@@ -121,19 +137,14 @@ def add():
         md=request.form["md"]
         phone=request.form["phone"]
         address=request.form["address"]
-        cls=request.form["classification"]
         notes=request.form["notes"]
 
         today=datetime.today().strftime("%Y-%m-%d")
 
-        append_csv(OFFICE_FILE,[office,md,phone,cls,today,notes,address])
+        append_csv(OFFICE_FILE,[office,md,phone,"C",today,notes,address])
         return redirect("/")
 
     return render_template("add.html")
-
-@app.route("/map")
-def map_page():
-    return render_template("map.html")
 
 @app.route("/backup")
 def backup():

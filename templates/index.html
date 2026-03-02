@@ -23,33 +23,33 @@ body{font-family:Arial;background:#eef1f5;margin:0}
 <a class="button" href="/visits">Log Visit</a>
 <a class="button" href="/quick_referral">Quick Referral</a>
 <a class="button" href="/add">Add Office</a>
-<a class="button" href="/map">Office Map</a>
+<a class="button" href="/backup">Download Backup</a>
 
 <div class="card">
-
-<h3>Next Offices to Visit</h3>
-
+<h3>Suggested Offices This Week</h3>
 <ul>
-{% for n in next_visits %}
-<li>{{n}}</li>
+{% for w in weekly %}
+<li>{{w[0]}} — {{w[3]}} account — {{w[2]}} days since visit</li>
 {% endfor %}
-
 </ul>
-
 </div>
 
 <div class="card">
-
 <h3>Top Referral Sources</h3>
-
 <ul>
-
 {% for o in leaderboard %}
 <li>{{o[0]}} — {{o[1]}} referrals ({{o[2]}}%)</li>
 {% endfor %}
-
 </ul>
+</div>
 
+<div class="card">
+<h3>Offices You Haven't Seen Recently</h3>
+<ul>
+{% for n in nearby %}
+<li>{{n[0]}} — {{n[1]}} days</li>
+{% endfor %}
+</ul>
 </div>
 
 </div>
