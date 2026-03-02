@@ -3,28 +3,27 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Office Route Planner</title>
+<title>Marketing Analytics</title>
 </head>
 
 <body style="font-family:Arial;padding:20px;">
 
 <a href="/">⬅ Home</a>
 
-<h2>Office Route Planner</h2>
+<h2>Referral Types</h2>
 
 <ul>
-
-{% for o in offices %}
-
-<li>
-<b>{{o[0]}}</b><br>
-<a href="https://www.google.com/maps/search/{{o[1]}}" target="_blank">{{o[1]}}</a>
-</li>
-
-<br>
-
+{% for t in types %}
+<li>{{t[0]}} — {{t[1]}}</li>
 {% endfor %}
+</ul>
 
+<h2>Referrals Per Month</h2>
+
+<ul>
+{% for m in months %}
+<li>{{m[0]}} — {{m[1]}}</li>
+{% endfor %}
 </ul>
 
 </body>

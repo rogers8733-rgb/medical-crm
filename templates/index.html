@@ -12,6 +12,7 @@ body{font-family:Arial;background:#eef1f5;margin:0}
 .button{display:block;width:100%;background:#2563eb;color:white;padding:16px;border-radius:12px;text-align:center;text-decoration:none;font-size:20px;margin-bottom:12px}
 .card{background:white;padding:16px;border-radius:10px;margin-bottom:14px}
 </style>
+
 </head>
 
 <body>
@@ -21,35 +22,18 @@ body{font-family:Arial;background:#eef1f5;margin:0}
 <div class="container">
 
 <a class="button" href="/visits">Log Visit</a>
-<a class="button" href="/quick_referral">Quick Referral</a>
-<a class="button" href="/add">Add Office</a>
-<a class="button" href="/backup">Download Backup</a>
+<a class="button" href="/analytics">Marketing Analytics</a>
+<a class="button" href="/map">Route Planner</a>
 
 <div class="card">
 <h3>Suggested Offices This Week</h3>
+
 <ul>
 {% for w in weekly %}
-<li>{{w[0]}} — {{w[3]}} account — {{w[2]}} days since visit</li>
+<li>{{w[0]}} — {{w[1]}} days since visit — {{w[2]}} referrals</li>
 {% endfor %}
 </ul>
-</div>
 
-<div class="card">
-<h3>Top Referral Sources</h3>
-<ul>
-{% for o in leaderboard %}
-<li>{{o[0]}} — {{o[1]}} referrals ({{o[2]}}%)</li>
-{% endfor %}
-</ul>
-</div>
-
-<div class="card">
-<h3>Offices You Haven't Seen Recently</h3>
-<ul>
-{% for n in nearby %}
-<li>{{n[0]}} — {{n[1]}} days</li>
-{% endfor %}
-</ul>
 </div>
 
 </div>
