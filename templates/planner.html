@@ -2,16 +2,23 @@
 <html><head><meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{font-family:Arial;margin:20px;max-width:600px;}
-.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;text-align:center;background:#1976d2;color:white;text-decoration:none;}
+.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;background:#1976d2;color:white;text-align:center;text-decoration:none;}
 input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
+.card{border:1px solid #ddd;padding:15px;margin-bottom:12px;border-radius:8px;}
 </style>
 </head>
 <body>
 <a href="/">Home</a>
-<h2>Where Should I Go</h2>
-<ul>
+<h2>Visit Planner</h2>
+
 {% for r in results %}
-<li>{{r[0]}} - {{r[1]}} days <a href="/quickvisit/{{r[0]}}">Quick Visit</a></li>
+<div class="card">
+<b>{{r[0]}}</b><br>
+Account: {{r[1]}}<br>
+Days Since Visit: {{r[2]}}<br>
+<a class="btn" href="/quickvisit/{{r[0]}}">Quick Visit</a>
+<a class="btn" href="/office/{{r[0]}}">Open Office Profile</a>
+</div>
 {% endfor %}
-</ul>
+
 </body></html>

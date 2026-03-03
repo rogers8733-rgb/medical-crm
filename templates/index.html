@@ -1,26 +1,29 @@
 
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<html><head><meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{font-family:Arial;margin:20px;max-width:600px;}
-.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;text-align:center;background:#1976d2;color:white;text-decoration:none;}
+.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;background:#1976d2;color:white;text-align:center;text-decoration:none;}
 input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
+.card{border:1px solid #ddd;padding:15px;margin-bottom:12px;border-radius:8px;}
 </style>
-
 </head>
 <body>
-
 <h2>Referral CRM</h2>
 
 <a class="btn" href="/visits">Log Visit</a>
 <a class="btn" href="/referral">Log Referral</a>
 <a class="btn" href="/add">Add Office</a>
 <a class="btn" href="/planner">Where Should I Go</a>
-<a class="btn" href="/nearme">Offices Near Me</a>
-<a class="btn" href="/analytics">Marketing Analytics</a>
-<a class="btn" href="/import">Import Offices</a>
+<a class="btn" href="/map">Route Planner</a>
 
-</body>
-</html>
+<h3>Offices</h3>
+
+{% for o in offices %}
+<div class="card">
+<b>{{o[0]}}</b><br>
+Rank: {{o[3]}}
+<a class="btn" href="/office/{{o[0]}}">Open Office Profile</a>
+</div>
+{% endfor %}
+
+</body></html>

@@ -1,28 +1,42 @@
 
-<!DOCTYPE html>
-<html>
-<head>
-<title>Office</title>
+<html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;margin:20px;max-width:600px;}
+.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;background:#1976d2;color:white;text-align:center;text-decoration:none;}
+input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
+.card{border:1px solid #ddd;padding:15px;margin-bottom:12px;border-radius:8px;}
+</style>
 </head>
 <body>
 
-<h1>{{office}}</h1>
+<a href="/">Home</a>
 
-<b>Total Visits:</b> {{visit_count}}<br>
-<b>Total Referrals:</b> {{ref_count}}<br>
-<b>Conversion Rate:</b> {{conversion}}%
+<h2>{{office[0]}}</h2>
 
-<br><br>
+<p><b>Phone:</b> {{office[2]}}</p>
+<p><b>Account Rank:</b> {{office[3]}}</p>
+<p><b>Address:</b> {{office[6]}}</p>
 
-<a href="/visit/{{office}}">Log Visit</a>
-<a href="/referral?office={{office}}">Log Referral</a>
+<a class="btn" target="_blank"
+href="https://www.google.com/maps/search/?api=1&query={{office[6]}}">
+Navigate
+</a>
 
-<h2>Referral Types</h2>
-<ul>
-{% for t in type_summary %}
-<li>{{t}} : {{type_summary[t]}}</li>
+<h3>Visits</h3>
+
+{% for v in visits %}
+<div class="card">
+{{v[1]}} – {{v[2]}}
+</div>
 {% endfor %}
-</ul>
 
-</body>
-</html>
+<h3>Referrals</h3>
+
+{% for r in refs %}
+<div class="card">
+{{r[1]}} – {{r[2]}}<br>
+{{r[3]}}
+</div>
+{% endfor %}
+
+</body></html>

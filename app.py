@@ -1,8 +1,7 @@
 
-from flask import Flask, render_template, request, redirect, send_file, jsonify
+from flask import Flask, render_template, request, redirect, send_file
 import csv, os
-from datetime import datetime
-from collections import defaultdict
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -10,36 +9,32 @@ OFFICE_FILE = "accounts.csv"
 VISIT_FILE = "visits.csv"
 REF_FILE = "referrals.csv"
 
-# ---------- FILE SAFETY ----------
 for f in [OFFICE_FILE, VISIT_FILE, REF_FILE]:
     if not os.path.exists(f):
-        open(f, "a").close()
+        open(f,"a").close()
 
-# ---------- HELPERS ----------
 def read_csv(file):
-    rows = []
+    rows=[]
     try:
         with open(file,"r",newline="") as f:
-            reader = csv.reader(f)
+            reader=csv.reader(f)
             for r in reader:
                 rows.append(r)
     except:
         pass
     return rows
 
+def write_csv(file,rows):
+    with open(file,"w",newline="") as f:
+        writer=csv.writer(f)
+        writer.writerows(rows)
+
 def append_csv(file,row):
     with open(file,"a",newline="") as f:
-        w = csv.writer(f)
-        w.writerow(row)
+        writer=csv.writer(f)
+        writer.writerow(row)
         f.flush()
         os.fsync(f.fileno())
-
-def office_exists(name):
-    offices = read_csv(OFFICE_FILE)
-    for o in offices:
-        if len(o)>0 and o[0].lower()==name.lower():
-            return True
-    return False
 
 def last_visit(name,visits):
     v=[x for x in visits if len(x)>1 and x[0]==name]
@@ -47,53 +42,70 @@ def last_visit(name,visits):
         return v[-1][1]
     return None
 
-# ---------- HOME ----------
+def update_account_ranks():
+    offices = read_csv(OFFICE_FILE)
+    refs = read_csv(REF_FILE)
+
+    cutoff = datetime.today() - timedelta(days=90)
+
+    counts = {}
+
+    for r in refs:
+        if len(r) < 3:
+            continue
+        office = r[0]
+        try:
+            d = datetime.strptime(r[1], "%Y-%m-%d")
+        except:
+            continue
+
+        if d >= cutoff:
+            counts[office] = counts.get(office,0) + 1
+
+    new_rows = []
+
+    for o in offices:
+        if len(o) < 7:
+            new_rows.append(o)
+            continue
+
+        name = o[0]
+        c = counts.get(name,0)
+
+        rank = "D"
+
+        if c >= 5:
+            rank = "A"
+        elif c >= 2:
+            rank = "B"
+        elif c >= 1:
+            rank = "C"
+
+        o[3] = rank
+        new_rows.append(o)
+
+    write_csv(OFFICE_FILE,new_rows)
+
 @app.route("/")
 def index():
-    offices = read_csv(OFFICE_FILE)
-    return render_template("index.html", offices=offices)
+    update_account_ranks()
+    offices=read_csv(OFFICE_FILE)
+    return render_template("index.html",offices=offices)
 
-# ---------- ADD OFFICE ----------
-@app.route("/add", methods=["GET","POST"])
+@app.route("/add",methods=["GET","POST"])
 def add():
     if request.method=="POST":
         office=request.form.get("office","")
         phone=request.form.get("phone","")
         address=request.form.get("address","")
         notes=request.form.get("notes","")
-
-        if office and not office_exists(office):
-            today=datetime.today().strftime("%Y-%m-%d")
-            append_csv(OFFICE_FILE,[office,"",phone,"C",today,notes,address])
-
+        rank=request.form.get("rank","C")
+        today=datetime.today().strftime("%Y-%m-%d")
+        append_csv(OFFICE_FILE,[office,"",phone,rank,today,notes,address])
         return redirect("/")
-
     return render_template("add.html")
 
-# ---------- IMPORT ----------
-@app.route("/import", methods=["GET","POST"])
-def import_offices():
-    if request.method=="POST":
-        file=request.files.get("file")
-        if file:
-            data=file.read().decode("utf-8").splitlines()
-            reader=csv.reader(data)
-            today=datetime.today().strftime("%Y-%m-%d")
-            next(reader,None)
-            for row in reader:
-                if len(row)>=5:
-                    office=row[0]
-                    source_type=row[1]
-                    phone=row[2]
-                    address=row[3]
-                    notes=row[4]
-                    if office and not office_exists(office):
-                        append_csv(OFFICE_FILE,[office,source_type,phone,"C",today,notes,address])
-        return redirect("/")
-    return render_template("import.html")
-
-# ---------- VISIT ----------
-@app.route("/visits", methods=["GET","POST"])
+@app.route("/visits",methods=["GET","POST"])
 def visits():
     offices=read_csv(OFFICE_FILE)
     if request.method=="POST":
@@ -101,18 +113,16 @@ def visits():
         note=request.form.get("note","")
         today=datetime.today().strftime("%Y-%m-%d")
         append_csv(VISIT_FILE,[office,today,note])
-        return redirect("/")
-    return render_template("visits.html", offices=offices)
+        return redirect("/planner")
+    return render_template("visits.html",offices=offices)
 
-# ---------- QUICK VISIT ----------
 @app.route("/quickvisit/<office>")
 def quickvisit(office):
     today=datetime.today().strftime("%Y-%m-%d")
     append_csv(VISIT_FILE,[office,today,"Quick Visit"])
     return redirect("/planner")
 
-# ---------- REFERRAL ----------
-@app.route("/referral", methods=["GET","POST"])
+@app.route("/referral",methods=["GET","POST"])
 def referral():
     offices=read_csv(OFFICE_FILE)
     if request.method=="POST":
@@ -121,25 +131,22 @@ def referral():
         notes=request.form.get("notes","")
         today=datetime.today().strftime("%Y-%m-%d")
         append_csv(REF_FILE,[office,today,rtype,notes])
-        return redirect("/")
-    return render_template("referral.html", offices=offices)
+        update_account_ranks()
+        return redirect("/planner")
+    return render_template("referral.html",offices=offices)
 
-# ---------- PLANNER ----------
 @app.route("/planner")
 def planner():
+    update_account_ranks()
     offices=read_csv(OFFICE_FILE)
     visits=read_csv(VISIT_FILE)
-
     results=[]
     for o in offices:
         if len(o)==0:
             continue
-
         name=o[0]
-        priority=o[3] if len(o)>3 else "C"
-
+        rank=o[3] if len(o)>3 else "C"
         last=last_visit(name,visits)
-
         days=999
         if last:
             try:
@@ -147,45 +154,42 @@ def planner():
                 days=(datetime.today()-d).days
             except:
                 pass
+        limit=90
+        if rank=="A": limit=30
+        elif rank=="B": limit=60
+        elif rank=="C": limit=90
+        elif rank=="D": limit=180
+        overdue=days>=limit
+        results.append((name,rank,days,overdue))
+    results=sorted(results,key=lambda x:(x[1],-x[2]))
+    return render_template("planner.html",results=results)
 
-        results.append((name,days,priority))
-
-    results=sorted(results,key=lambda x:x[1],reverse=True)
-    return render_template("planner.html",results=results[:20])
-
-# ---------- ANALYTICS ----------
-@app.route("/analytics")
-def analytics():
-    refs=read_csv(REF_FILE)
+@app.route("/office/<name>")
+def office(name):
+    offices=read_csv(OFFICE_FILE)
     visits=read_csv(VISIT_FILE)
+    refs=read_csv(REF_FILE)
 
-    office_counts=defaultdict(int)
-    type_counts=defaultdict(int)
+    office_data=None
+    for o in offices:
+        if len(o)>0 and o[0]==name:
+            office_data=o
 
-    for r in refs:
-        if len(r)>=3:
-            office=r[0]
-            rtype=r[2]
-            office_counts[office]+=1
-            type_counts[rtype]+=1
-
-    top_offices=sorted(office_counts.items(),key=lambda x:x[1],reverse=True)[:10]
+    office_visits=[v for v in visits if len(v)>1 and v[0]==name]
+    office_refs=[r for r in refs if len(r)>2 and r[0]==name]
 
     return render_template(
-        "analytics.html",
-        top_offices=top_offices,
-        type_counts=dict(type_counts),
-        total_referrals=len(refs),
-        total_visits=len(visits)
+        "office.html",
+        office=office_data,
+        visits=office_visits,
+        refs=office_refs
     )
 
-# ---------- NEAR ME ----------
-@app.route("/nearme")
-def nearme():
+@app.route("/map")
+def map_page():
     offices=read_csv(OFFICE_FILE)
-    return render_template("nearme.html", offices=offices)
+    return render_template("map.html",offices=offices)
 
-# ---------- BACKUP ----------
 @app.route("/backup/<file>")
 def backup(file):
     if file=="accounts":
@@ -196,6 +200,6 @@ def backup(file):
         return send_file(REF_FILE,as_attachment=True)
     return redirect("/")
 
-if __name__ == "__main__":
+if __name__=="__main__":
     port=int(os.environ.get("PORT",10000))
     app.run(host="0.0.0.0",port=port)
