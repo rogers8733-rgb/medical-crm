@@ -80,16 +80,13 @@ def import_offices():
 
                    append_csv(
                        OFFICE_FILE,
-                       [
-                          office,
+                       [office,
                           source_type,
                           phone,
                           "C",
                           today,
                           notes,
-                          address
-                    ]
-                )
+                          address])
 
     return redirect("/")
 
