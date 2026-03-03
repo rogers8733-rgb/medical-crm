@@ -1,7 +1,7 @@
 
-<html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<html><head>
 <style>
-body{font-family:Arial;margin:20px;max-width:600px;}
+body{font-family:Arial;margin:20px;max-width:650px;}
 .btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;background:#1976d2;color:white;text-align:center;text-decoration:none;}
 input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
 .card{border:1px solid #ddd;padding:15px;margin-bottom:12px;border-radius:8px;}
@@ -14,7 +14,7 @@ input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
 <h2>{{office[0]}}</h2>
 
 <p><b>Phone:</b> {{office[2]}}</p>
-<p><b>Account Rank:</b> {{office[3]}}</p>
+<p><b>Rank:</b> {{office[3]}}</p>
 <p><b>Address:</b> {{office[6]}}</p>
 
 <a class="btn" target="_blank"
@@ -22,21 +22,22 @@ href="https://www.google.com/maps/search/?api=1&query={{office[6]}}">
 Navigate
 </a>
 
-<h3>Visits</h3>
+<h3>Quick Actions</h3>
 
+<a class="btn" href="/quickvisit/{{office[0]}}">Quick Visit</a>
+
+<a class="btn" href="/quickref/{{office[0]}}/Custom Power">Custom Power</a>
+<a class="btn" href="/quickref/{{office[0]}}/Custom Manual">Custom Manual</a>
+<a class="btn" href="/quickref/{{office[0]}}/Captains Seat Power">Captains Seat Power</a>
+
+<h3>Visits</h3>
 {% for v in visits %}
-<div class="card">
-{{v[1]}} – {{v[2]}}
-</div>
+<div class="card">{{v[1]}} — {{v[2]}}</div>
 {% endfor %}
 
 <h3>Referrals</h3>
-
 {% for r in refs %}
-<div class="card">
-{{r[1]}} – {{r[2]}}<br>
-{{r[3]}}
-</div>
+<div class="card">{{r[1]}} — {{r[2]}}</div>
 {% endfor %}
 
 </body></html>
