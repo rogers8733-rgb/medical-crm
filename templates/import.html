@@ -1,21 +1,28 @@
-
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Import Offices</title>
 </head>
 
-<body style="font-family:Arial;padding:20px;">
+<body style="font-family:Arial;padding:20px;max-width:600px;margin:auto;">
 
 <a href="/">⬅ Home</a>
 
-<h2>Import Offices from Excel / CSV</h2>
+<h2>Import Referral Sources from Excel / CSV</h2>
 
-<p>Upload a CSV exported from Excel with columns:</p>
+<p>Upload a CSV exported from Excel with the following columns:</p>
 
 <pre>
-Office Name, Doctor, Phone, Address, Notes
+Referral Source, Type, Phone, Address, Notes
+</pre>
+
+<p>Example:</p>
+
+<pre>
+Madison Family Medicine,Primary Care,256-555-1212,123 Main St Madison AL,Good wheelchair referrals
+Huntsville Neurology,Neurology,256-555-7777,455 Governors Dr Huntsville AL,Ask for referral coordinator
 </pre>
 
 <form method="POST" enctype="multipart/form-data">
@@ -24,7 +31,7 @@ Office Name, Doctor, Phone, Address, Notes
 
 <br><br>
 
-<button style="padding:14px;">Upload</button>
+<button style="padding:14px;font-size:16px;">Upload</button>
 
 </form>
 

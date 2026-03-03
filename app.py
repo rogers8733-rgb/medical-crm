@@ -52,29 +52,48 @@ def add():
 
     return render_template("add.html")
 
-
 @app.route("/import", methods=["GET","POST"])
 def import_offices():
-    if request.method=="POST":
-        file=request.files.get("file")
+
+    if request.method == "POST":
+
+        file = request.files.get("file")
+        
         if file:
-            data=file.read().decode("utf-8").splitlines()
-            reader=csv.reader(data)
-            today=datetime.today().strftime("%Y-%m-%d")
 
-            for row in reader:
-                if len(row)>=4:
-                    office=row[0]
-                    phone=row[1]
-                    address=row[2]
-                    notes=row[3] if len(row)>3 else ""
+           data = file.read().decode("utf-8").splitlines()
+           reader = csv.reader(data)
 
-                    append_csv(OFFICE_FILE,[office,"",phone,"C",today,notes,address])
+           today = datetime.today().strftime("%Y-%m-%d")
 
-        return redirect("/")
+           next(reader, None)   # skip header row
+
+           for row in reader:
+
+               if len(row) >= 5:
+
+                   office = row[0]
+                   source_type = row[1]
+                   phone = row[2]
+                   address = row[3]
+                   notes = row[4]
+
+                   append_csv(
+                       OFFICE_FILE,
+                       [
+                          office,
+                          source_type,
+                          phone,
+                          "C",
+                          today,
+                          notes,
+                          address
+                    ]
+                )
+
+    return redirect("/")
 
     return render_template("import.html")
-
 
 @app.route("/visits", methods=["GET","POST"])
 def visits():
@@ -103,7 +122,7 @@ def referral():
 
         append_csv(REF_FILE,[office,today,rtype,notes])
         return redirect("/")
-
+else:
     return render_template("referral.html", offices=offices)
 
 
