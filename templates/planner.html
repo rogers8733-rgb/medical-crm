@@ -1,22 +1,17 @@
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weekly Planner</title>
+<html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;margin:20px;max-width:600px;}
+.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;text-align:center;background:#1976d2;color:white;text-decoration:none;}
+input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
+</style>
 </head>
-
-<body style="font-family:Arial;padding:20px;">
-
-<a href="/">⬅ Home</a>
-
-<h2>Suggested Offices To Visit</h2>
-
+<body>
+<a href="/">Home</a>
+<h2>Where Should I Go</h2>
 <ul>
 {% for r in results %}
-<li>{{r[0]}} — {{r[1]}} days since last visit</li>
+<li>{{r[0]}} - {{r[1]}} days <a href="/quickvisit/{{r[0]}}">Quick Visit</a></li>
 {% endfor %}
 </ul>
-
-</body>
-</html>
+</body></html>

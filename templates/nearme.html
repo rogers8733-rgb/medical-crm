@@ -9,18 +9,22 @@ body{font-family:Arial;margin:20px;max-width:600px;}
 input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
 </style>
 
+<script>
+function getLocation(){
+navigator.geolocation.getCurrentPosition(function(pos){
+document.getElementById("loc").innerText="Lat: "+pos.coords.latitude+" Lon: "+pos.coords.longitude;
+});
+}
+</script>
 </head>
-<body>
-
-<h2>Referral CRM</h2>
-
-<a class="btn" href="/visits">Log Visit</a>
-<a class="btn" href="/referral">Log Referral</a>
-<a class="btn" href="/add">Add Office</a>
-<a class="btn" href="/planner">Where Should I Go</a>
-<a class="btn" href="/nearme">Offices Near Me</a>
-<a class="btn" href="/analytics">Marketing Analytics</a>
-<a class="btn" href="/import">Import Offices</a>
-
+<body onload="getLocation()">
+<a href="/">Home</a>
+<h2>Offices Near Me</h2>
+<p id="loc">Finding location...</p>
+<ul>
+{% for o in offices %}
+<li>{{o[0]}}</li>
+{% endfor %}
+</ul>
 </body>
 </html>

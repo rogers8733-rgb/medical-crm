@@ -1,53 +1,22 @@
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Log Referral</title>
+<html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;margin:20px;max-width:600px;}
+.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;text-align:center;background:#1976d2;color:white;text-decoration:none;}
+input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
+</style>
 </head>
-
-<body style="font-family:Arial;padding:20px;">
-
-<a href="/">⬅ Home</a>
-
+<body>
+<a href="/">Home</a>
 <h2>Log Referral</h2>
-
-<input id="search" placeholder="Search office..." style="width:100%;padding:10px;margin-bottom:10px;">
-
 <form method="POST">
-
-<select name="office" id="office" style="width:100%;padding:10px;">
+<select name="office">
 {% for o in offices %}
 <option>{{o[0]}}</option>
 {% endfor %}
-</select><br><br>
-
-Referral Type<br>
-<select name="rtype" style="width:100%;padding:10px;">
-<option>Group 3 Power Chair</option>
-<option>Group 2 Power Chair</option>
-<option>Scooter</option>
-<option>Custom Manual</option>
-<option>Other</option>
-</select><br><br>
-
-Notes<br>
-<textarea name="notes" style="width:100%;padding:10px;"></textarea><br><br>
-
-<button style="padding:14px;">Save Referral</button>
-
+</select>
+<input name="rtype" placeholder="Referral Type">
+<textarea name="notes" placeholder="Notes"></textarea>
+<button class="btn">Save Referral</button>
 </form>
-
-<script>
-document.getElementById("search").addEventListener("keyup", function(){
-var filter=this.value.toLowerCase();
-var options=document.getElementById("office").options;
-for(let i=0;i<options.length;i++){
-var txt=options[i].text.toLowerCase();
-options[i].style.display=txt.includes(filter)?"":"none";
-}
-});
-</script>
-
-</body>
-</html>
+</body></html>

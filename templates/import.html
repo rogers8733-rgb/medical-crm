@@ -1,39 +1,18 @@
-<!DOCTYPE html>
 
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Import Offices</title>
+<html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;margin:20px;max-width:600px;}
+.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;text-align:center;background:#1976d2;color:white;text-decoration:none;}
+input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
+</style>
 </head>
-
-<body style="font-family:Arial;padding:20px;max-width:600px;margin:auto;">
-
-<a href="/">⬅ Home</a>
-
-<h2>Import Referral Sources from Excel / CSV</h2>
-
-<p>Upload a CSV exported from Excel with the following columns:</p>
-
-<pre>
-Referral Source, Type, Phone, Address, Notes
-</pre>
-
-<p>Example:</p>
-
-<pre>
-Madison Family Medicine,Primary Care,256-555-1212,123 Main St Madison AL,Good wheelchair referrals
-Huntsville Neurology,Neurology,256-555-7777,455 Governors Dr Huntsville AL,Ask for referral coordinator
-</pre>
-
+<body>
+<a href="/">Home</a>
+<h2>Import Offices</h2>
+<p>CSV Format:</p>
+<pre>Referral Source,Type,Phone,Address,Notes</pre>
 <form method="POST" enctype="multipart/form-data">
-
 <input type="file" name="file">
-
-<br><br>
-
-<button style="padding:14px;font-size:16px;">Upload</button>
-
+<button class="btn">Upload</button>
 </form>
-
-</body>
-</html>
+</body></html>
