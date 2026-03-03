@@ -10,46 +10,41 @@ OFFICE_FILE = "accounts.csv"
 VISIT_FILE = "visits.csv"
 REF_FILE = "referrals.csv"
 
-# ---------- FILE SAFETY ----------
+# ensure files exist
 for f in [OFFICE_FILE, VISIT_FILE, REF_FILE]:
     if not os.path.exists(f):
         open(f,"a").close()
 
-# ---------- CACHE STRUCTURE (performance improvement) ----------
-cache = {
-    "offices": [],
-    "visits": [],
-    "refs": []
-}
-
-def load_cache():
-    cache["offices"] = read_csv(OFFICE_FILE)
-    cache["visits"] = read_csv(VISIT_FILE)
-    cache["refs"] = read_csv(REF_FILE)
+cache={"offices":[],"visits":[],"refs":[]}
 
 def read_csv(file):
     rows=[]
     try:
         with open(file,"r",newline="") as f:
-            reader=csv.reader(f)
-            for r in reader:
-                rows.append(r)
+            r=csv.reader(f)
+            for x in r:
+                rows.append(x)
     except:
         pass
     return rows
 
+def load_cache():
+    cache["offices"]=read_csv(OFFICE_FILE)
+    cache["visits"]=read_csv(VISIT_FILE)
+    cache["refs"]=read_csv(REF_FILE)
+
 def append_csv(file,row):
     with open(file,"a",newline="") as f:
-        writer=csv.writer(f)
-        writer.writerow(row)
+        w=csv.writer(f)
+        w.writerow(row)
         f.flush()
         os.fsync(f.fileno())
     load_cache()
 
 def write_csv(file,rows):
     with open(file,"w",newline="") as f:
-        writer=csv.writer(f)
-        writer.writerows(rows)
+        w=csv.writer(f)
+        w.writerows(rows)
     load_cache()
 
 def last_visit(name):
@@ -58,13 +53,12 @@ def last_visit(name):
         return v[-1][1]
     return None
 
-# ---------- AUTO ACCOUNT RANK ----------
+# auto rank
 def update_ranks():
-    refs = cache["refs"]
-    offices = cache["offices"]
-
-    cutoff = datetime.today() - timedelta(days=90)
-    counts = {}
+    refs=cache["refs"]
+    offices=cache["offices"]
+    cutoff=datetime.today()-timedelta(days=90)
+    counts={}
 
     for r in refs:
         if len(r)<3: continue
@@ -90,22 +84,41 @@ def update_ranks():
 
     write_csv(OFFICE_FILE,new)
 
-# ---------- HOME ----------
 @app.route("/")
 def index():
     load_cache()
     update_ranks()
-    offices = cache["offices"]
-    return render_template("index.html",offices=offices)
+    return render_template("index.html",offices=cache["offices"])
 
-# ---------- SEARCH ----------
+# -------- IMPORT OFFICES --------
+@app.route("/import",methods=["GET","POST"])
+def import_offices():
+    if request.method=="POST":
+        file=request.files.get("file")
+        if file:
+            data=file.read().decode("utf-8").splitlines()
+            reader=csv.reader(data)
+            today=datetime.today().strftime("%Y-%m-%d")
+            next(reader,None)
+            for row in reader:
+                if len(row)>=5:
+                    office=row[0]
+                    source_type=row[1]
+                    phone=row[2]
+                    address=row[3]
+                    notes=row[4]
+                    append_csv(OFFICE_FILE,[office,source_type,phone,"C",today,notes,address])
+        return redirect("/")
+    return render_template("import.html")
+
+# search
 @app.route("/search")
 def search():
     q=request.args.get("q","").lower()
     results=[o for o in cache["offices"] if q in o[0].lower()]
     return render_template("search.html",results=results,q=q)
 
-# ---------- ADD OFFICE ----------
+# add office
 @app.route("/add",methods=["GET","POST"])
 def add():
     if request.method=="POST":
@@ -115,21 +128,18 @@ def add():
         notes=request.form.get("notes","")
         rank=request.form.get("rank","C")
         today=datetime.today().strftime("%Y-%m-%d")
-
         append_csv(OFFICE_FILE,[office,"",phone,rank,today,notes,address])
-
         return redirect("/")
-
     return render_template("add.html")
 
-# ---------- VISIT ----------
+# quick visit
 @app.route("/quickvisit/<office>")
 def quickvisit(office):
     today=datetime.today().strftime("%Y-%m-%d")
     append_csv(VISIT_FILE,[office,today,"Quick Visit"])
     return redirect("/office/"+office)
 
-# ---------- QUICK REFERRAL ----------
+# quick referral
 @app.route("/quickref/<office>/<rtype>")
 def quickref(office,rtype):
     today=datetime.today().strftime("%Y-%m-%d")
@@ -137,92 +147,66 @@ def quickref(office,rtype):
     update_ranks()
     return redirect("/office/"+office)
 
-# ---------- REFERRAL PAGE ----------
+# referral form
 @app.route("/referral",methods=["GET","POST"])
 def referral():
-    offices=cache["offices"]
     if request.method=="POST":
         office=request.form.get("office","")
         rtype=request.form.get("rtype","")
         notes=request.form.get("notes","")
         today=datetime.today().strftime("%Y-%m-%d")
-
         append_csv(REF_FILE,[office,today,rtype,notes])
         update_ranks()
         return redirect("/planner")
+    return render_template("referral.html",offices=cache["offices"])
 
-    return render_template("referral.html",offices=offices)
-
-# ---------- TODAY'S STOPS ----------
+# planner
 @app.route("/planner")
 def planner():
     update_ranks()
-
     results=[]
     for o in cache["offices"]:
         name=o[0]
         rank=o[3] if len(o)>3 else "C"
-
         last=last_visit(name)
         days=999
-
         if last:
             try:
                 d=datetime.strptime(last,"%Y-%m-%d")
                 days=(datetime.today()-d).days
             except:
                 pass
-
-        limit=90
-        if rank=="A": limit=30
-        elif rank=="B": limit=60
-        elif rank=="C": limit=90
-        elif rank=="D": limit=180
-
-        overdue=days>=limit
-        results.append((name,rank,days,overdue))
-
+        results.append((name,rank,days))
     results=sorted(results,key=lambda x:(x[1],-x[2]))
-
     return render_template("planner.html",results=results)
 
-# ---------- TOP REFERRALS ----------
+# top referrals
 @app.route("/top")
 def top():
     counts=defaultdict(int)
     for r in cache["refs"]:
         if len(r)>=3:
             counts[r[0]]+=1
-
     top=sorted(counts.items(),key=lambda x:x[1],reverse=True)[:10]
-
     return render_template("top.html",top=top)
 
-# ---------- OFFICE PROFILE ----------
+# office page
 @app.route("/office/<name>")
 def office(name):
     office_data=None
     for o in cache["offices"]:
         if o[0]==name:
             office_data=o
-
     visits=[v for v in cache["visits"] if len(v)>1 and v[0]==name]
     refs=[r for r in cache["refs"] if len(r)>2 and r[0]==name]
+    return render_template("office.html",office=office_data,visits=visits,refs=refs)
 
-    return render_template(
-        "office.html",
-        office=office_data,
-        visits=visits,
-        refs=refs
-    )
-
-# ---------- MAP ----------
+# map route planner
 @app.route("/map")
 def map_page():
-    offices=cache["offices"]
-    return render_template("map.html",offices=offices)
+    return render_template("map.html",offices=cache["offices"])
 
-# ---------- BACKUP ----------
+# backups
 @app.route("/backup/<file>")
 def backup(file):
     if file=="accounts":
