@@ -1,33 +1,20 @@
 
-<html><head>
-<style>
-body{font-family:Arial;margin:20px;max-width:650px;}
-.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;background:#1976d2;color:white;text-align:center;text-decoration:none;}
-input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
-.card{border:1px solid #ddd;padding:15px;margin-bottom:12px;border-radius:8px;}
-</style>
-</head>
-<body>
-<a href="/">Home</a>
+{% extends "base.html" %}
+{% block content %}
+
 <h2>Log Referral</h2>
 
-<form method="POST">
+<form method="post">
 
-<select name="office">
-{% for o in offices %}
-<option>{{o[0]}}</option>
-{% endfor %}
+<select name="cat">
+<option>Complex Power</option>
+<option>Complex Manual</option>
+<option>Basic Power</option>
+<option>Scooter</option>
 </select>
 
-<select name="rtype">
-<option>Captains Seat Power</option>
-<option>Custom Power</option>
-<option>Custom Manual</option>
-</select>
-
-<textarea name="notes" placeholder="Notes"></textarea>
-
-<button class="btn">Save Referral</button>
+<button class="btn">Save</button>
 
 </form>
-</body></html>
+
+{% endblock %}

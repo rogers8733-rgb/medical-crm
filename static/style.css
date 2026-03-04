@@ -1,0 +1,16 @@
+
+body{font-family:Arial;background:#f2f2f2;margin:0}
+.content{padding:20px;margin-bottom:70px}
+.card{background:white;padding:15px;margin-bottom:10px;border-radius:10px;font-size:18px}
+.btn{background:#007bff;color:white;padding:16px;width:100%;border:none;border-radius:10px;font-size:20px;margin-top:10px}
+#map{height:350px;margin-bottom:10px}
+.nav{
+position:fixed;
+bottom:0;
+width:100%;
+background:#222;
+display:flex;
+justify-content:space-around;
+padding:10px 0;
+}
+.nav a{color:white;text-decoration:none;font-size:18px}

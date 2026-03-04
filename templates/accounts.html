@@ -1,0 +1,16 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Accounts</h2>
+
+{% for a in accounts %}
+<div class="card">
+<b>{{a[1]}}</b><br>
+{{a[3]}}<br>
+<a href="/visit/{{a[0]}}">Visit</a> |
+<a href="/referral/{{a[0]}}">Referral</a>
+</div>
+{% endfor %}
+
+{% endblock %}

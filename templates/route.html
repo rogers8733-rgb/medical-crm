@@ -2,10 +2,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Due Today</h2>
+<h2>Route Order</h2>
 
 {% for a in accounts %}
-<div class="card">{{a[1]}}</div>
+<div class="card">
+{{loop.index}}. {{a.name}}
+</div>
 {% endfor %}
 
 {% endblock %}

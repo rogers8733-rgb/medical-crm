@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Dashboard</h2>
+
+<div class="card">Accounts: {{total}}</div>
+<div class="card">Visits Due: {{due}}</div>
+
+<button class="btn" onclick="gps()">Referrals Near Me</button>
+
+<form id="gpsForm" method="POST" action="/near">
+<input type="hidden" name="lat" id="lat">
+<input type="hidden" name="lon" id="lon">
+</form>
+
+<script>
+function gps(){
+ navigator.geolocation.getCurrentPosition(function(pos){
+  document.getElementById("lat").value=pos.coords.latitude
+  document.getElementById("lon").value=pos.coords.longitude
+  document.getElementById("gpsForm").submit()
+ })
+}
+</script>
+
+{% endblock %}
