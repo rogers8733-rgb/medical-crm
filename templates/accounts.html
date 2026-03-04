@@ -11,12 +11,9 @@
 <b>{{a[1]}}</b><br>
 {{a[2]}} {{a[3]}}<br>
 
-Active: {{a[7]}}
-
-<a class="btn" href="/visit/{{a[0]}}">Log Visit</a>
-
 <form action="/referral/{{a[0]}}" method="post">
 
+<input name="who" placeholder="Who you spoke with">
 <input name="patient" placeholder="Patient">
 
 <select name="category">
@@ -32,7 +29,9 @@ Active: {{a[7]}}
 <option>Delivered</option>
 </select>
 
-<button class="btn">Add Referral</button>
+<textarea name="notes" placeholder="Visit notes"></textarea>
+
+<button class="btn">Log Visit + Referral</button>
 
 </form>
 

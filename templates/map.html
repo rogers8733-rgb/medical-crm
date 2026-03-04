@@ -10,13 +10,11 @@
 
 <script>
 var map=L.map('map').setView([34.7,-86.6],10);
-
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 {% for r in rows %}
 
 var marker=L.marker([{{r[1]}},{{r[2]}}]).addTo(map);
-
 marker.bindPopup("<b>{{r[0]}}</b><br>{{r[3]}} {{r[4]}}");
 
 {% endfor %}
