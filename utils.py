@@ -1,5 +1,5 @@
 
-import math,requests
+import requests,math
 
 def haversine(lat1,lon1,lat2,lon2):
     R=3958.8
@@ -11,24 +11,11 @@ def haversine(lat1,lon1,lat2,lon2):
     return R*c
 
 def geocode_address(address):
-
     url="https://nominatim.openstreetmap.org/search"
-
-    params={
-        "q":address,
-        "format":"json",
-        "limit":1
-    }
-
-    headers={
-        "User-Agent":"territory-crm-app"
-    }
-
+    params={"q":address,"format":"json","limit":1}
+    headers={"User-Agent":"territory-crm-app"}
     r=requests.get(url,params=params,headers=headers,timeout=10)
-
     data=r.json()
-
     if data:
         return data[0]["lat"],data[0]["lon"]
-
     return None,None

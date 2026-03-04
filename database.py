@@ -1,6 +1,5 @@
 
 import sqlite3
-
 DB="crm.db"
 
 def conn():

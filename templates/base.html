@@ -3,8 +3,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="/static/manifest.json">
 <link rel="stylesheet" href="/static/style.css">
+<link rel="manifest" href="/static/manifest.json">
 </head>
 <body>
 
@@ -14,14 +14,14 @@
 
 <div class="nav">
 <a href="/">Home</a>
+<a href="/map">Map</a>
 <a href="/accounts">Accounts</a>
 <a href="/leaderboard">Leaders</a>
-<a href="/import">Import</a>
 </div>
 
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/static/sw.js');
+ navigator.serviceWorker.register('/static/sw.js');
 }
 </script>
 

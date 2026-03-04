@@ -1,9 +1,9 @@
 
 from flask import Flask,render_template,request,redirect
-import csv,time
 from datetime import datetime,timedelta
+import csv,time
 from database import conn,init
-from utils import haversine,geocode_address
+from utils import geocode_address
 
 app=Flask(__name__)
 init()
@@ -15,30 +15,37 @@ def follow_days(c):
 def home():
     db=conn()
     total=db.execute("SELECT COUNT(*) FROM accounts").fetchone()[0]
-    today=datetime.now().strftime("%Y-%m-%d")
-    due=db.execute("SELECT COUNT(*) FROM accounts WHERE next_follow_up_date<=?",(today,)).fetchone()[0]
+    due=db.execute("SELECT COUNT(*) FROM accounts WHERE next_follow_up_date<=date('now')").fetchone()[0]
     db.close()
     return render_template("home.html",total=total,due=due)
 
 @app.route("/accounts")
 def accounts():
     db=conn()
-    rows=db.execute("SELECT * FROM accounts ORDER BY office_name").fetchall()
+    rows=db.execute("SELECT * FROM accounts").fetchall()
     db.close()
     return render_template("accounts.html",accounts=rows)
 
-@app.route("/account/<id>")
-def account(id):
+@app.route("/map")
+def map_view():
     db=conn()
-    office=db.execute("SELECT * FROM accounts WHERE id=?",(id,)).fetchone()
-    visits=db.execute("SELECT date,who,visit_type,notes FROM visits WHERE account_id=? ORDER BY date DESC",(id,)).fetchall()
+    rows=db.execute("SELECT id,office_name,latitude,longitude FROM accounts WHERE latitude IS NOT NULL").fetchall()
     db.close()
-    return render_template("account.html",office=office,visits=visits)
+    return render_template("map.html",rows=rows)
+
+@app.route("/quickvisit/<id>",methods=["POST"])
+def quickvisit(id):
+    db=conn()
+    today=datetime.now().strftime("%Y-%m-%d")
+    db.execute("INSERT INTO visits(account_id,date,who,visit_type,notes) VALUES(?,?,?,?,?)",
+               (id,today,"Quick Visit","Drop-in","Logged from map"))
+    db.commit()
+    db.close()
+    return "ok"
 
 @app.route("/visit/<id>",methods=["GET","POST"])
 def visit(id):
     if request.method=="POST":
-
         who=request.form["who"]
         vtype=request.form["type"]
         notes=request.form["notes"]
@@ -46,44 +53,20 @@ def visit(id):
         db=conn()
         today=datetime.now()
 
-        db.execute(
-            "INSERT INTO visits(account_id,date,who,visit_type,notes) VALUES(?,?,?,?,?)",
-            (id,today.strftime("%Y-%m-%d"),who,vtype,notes)
-        )
+        db.execute("INSERT INTO visits(account_id,date,who,visit_type,notes) VALUES(?,?,?,?,?)",
+                   (id,today.strftime("%Y-%m-%d"),who,vtype,notes))
 
-        r=db.execute(
-            "SELECT classification,times_visited FROM accounts WHERE id=?",
-            (id,)
-        ).fetchone()
-
+        r=db.execute("SELECT classification,times_visited FROM accounts WHERE id=?",(id,)).fetchone()
         next_date=(today+timedelta(days=follow_days(r[0]))).strftime("%Y-%m-%d")
 
-        db.execute(
-            "UPDATE accounts SET last_visit_date=?,next_follow_up_date=?,times_visited=? WHERE id=?",
-            (today.strftime("%Y-%m-%d"),next_date,r[1]+1,id)
-        )
+        db.execute("UPDATE accounts SET last_visit_date=?,next_follow_up_date=?,times_visited=? WHERE id=?",
+                   (today.strftime("%Y-%m-%d"),next_date,r[1]+1,id))
 
         db.commit()
         db.close()
-
-        return redirect(f"/account/{id}")
+        return redirect("/accounts")
 
     return render_template("visit.html",id=id)
-
-@app.route("/referral/<id>",methods=["POST"])
-def referral(id):
-    cat=request.form["cat"]
-    db=conn()
-
-    db.execute(
-        "INSERT INTO referrals(account_id,category,date) VALUES(?,?,?)",
-        (id,cat,datetime.now().strftime("%Y-%m-%d"))
-    )
-
-    db.commit()
-    db.close()
-
-    return redirect(f"/account/{id}")
 
 @app.route("/leaderboard")
 def leaderboard():
@@ -98,67 +81,33 @@ def leaderboard():
 
 @app.route("/import",methods=["GET","POST"])
 def import_csv():
-
     if request.method=="POST":
-
         f=request.files["file"]
         reader=csv.DictReader(f.read().decode().splitlines())
-
         db=conn()
-
         for r in reader:
-
-            db.execute(
-                "INSERT INTO accounts(office_name,address,city,classification) VALUES(?,?,?,?)",
-                (
-                    r.get("office_name"),
-                    r.get("address"),
-                    r.get("city"),
-                    r.get("classification","C")
-                )
-            )
-
+            db.execute("INSERT INTO accounts(office_name,address,city,classification) VALUES(?,?,?,?)",
+                       (r.get("office_name"),r.get("address"),r.get("city"),r.get("classification","C")))
         db.commit()
         db.close()
-
         return redirect("/accounts")
-
     return render_template("import.html")
 
 @app.route("/geocode")
-def geocode_all():
-
+def geocode():
     db=conn()
     cur=db.cursor()
-
-    rows=cur.execute(
-        "SELECT id,address,city FROM accounts WHERE latitude IS NULL OR latitude=''"
-    ).fetchall()
-
+    rows=cur.execute("SELECT id,address,city FROM accounts WHERE latitude IS NULL").fetchall()
     updated=0
-
     for r in rows:
-
         try:
-
-            full=f"{r[1]} {r[2]}"
-
-            lat,lon=geocode_address(full)
-
+            lat,lon=geocode_address(f"{r[1]} {r[2]}")
             if lat and lon:
-                cur.execute(
-                    "UPDATE accounts SET latitude=?,longitude=? WHERE id=?",
-                    (lat,lon,r[0])
-                )
+                cur.execute("UPDATE accounts SET latitude=?,longitude=? WHERE id=?",(lat,lon,r[0]))
                 updated+=1
-
             db.commit()
-
             time.sleep(1)
-
-        except Exception as e:
-            print("Geocode error:",e)
-
+        except:
+            pass
     db.close()
-
-    return f"Geocoded {updated} offices successfully"
+    return f"Geocoded {updated} offices"
