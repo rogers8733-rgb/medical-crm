@@ -2,12 +2,24 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Today's Optimized Route</h2>
+<h2>Auto Territory Route</h2>
 
-{% for a in accounts %}
+{% for s in stops %}
+
 <div class="card">
-{{loop.index}}. {{a.name}}
+
+<b>{{loop.index}}. {{s.name}}</b><br>
+{{s.address}} {{s.city}}<br><br>
+
+<a class="btn" href="/visit/{{s.id}}">Log Visit</a>
+
+<a class="btn" target="_blank"
+href="https://www.google.com/maps/dir/?api=1&destination={{s.address}} {{s.city}}">
+Navigate
+</a>
+
 </div>
+
 {% endfor %}
 
 {% endblock %}

@@ -5,8 +5,23 @@
 <h2>Territory Dashboard</h2>
 
 <div class="card">Accounts: {{total}}</div>
-<div class="card">Visits Due: {{due}}</div>
+<div class="card">Visits Due Today: {{due}}</div>
 
-<a class="btn" href="/geocode">Generate GPS Coordinates</a>
+<button class="btn" onclick="buildRoute()">Auto Territory Route</button>
+
+<form id="routeForm" method="POST" action="/auto-route">
+<input type="hidden" name="lat" id="lat">
+<input type="hidden" name="lon" id="lon">
+</form>
+
+<script>
+function buildRoute(){
+navigator.geolocation.getCurrentPosition(function(pos){
+document.getElementById("lat").value=pos.coords.latitude
+document.getElementById("lon").value=pos.coords.longitude
+document.getElementById("routeForm").submit()
+})
+}
+</script>
 
 {% endblock %}

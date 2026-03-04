@@ -35,14 +35,5 @@ def init():
     )
     ''')
 
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS referrals(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        account_id INTEGER,
-        category TEXT,
-        date TEXT
-    )
-    ''')
-
     db.commit()
     db.close()
