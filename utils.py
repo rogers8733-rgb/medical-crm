@@ -1,5 +1,5 @@
 
-import math
+import math,requests
 
 def haversine(lat1,lon1,lat2,lon2):
     R=3958.8
@@ -10,15 +10,15 @@ def haversine(lat1,lon1,lat2,lon2):
     c=2*math.atan2(math.sqrt(a),math.sqrt(1-a))
     return R*c
 
-def optimize(start_lat,start_lon,points):
-    route=[]
-    current=(float(start_lat),float(start_lon))
-    remaining=points[:]
+def geocode_address(address):
+    url="https://nominatim.openstreetmap.org/search"
+    params={"q":address,"format":"json","limit":1}
+    headers={"User-Agent":"crm-app"}
 
-    while remaining:
-        nearest=min(remaining,key=lambda p:haversine(current[0],current[1],p["latitude"],p["longitude"]))
-        route.append(nearest)
-        current=(nearest["latitude"],nearest["longitude"])
-        remaining.remove(nearest)
+    r=requests.get(url,params=params,headers=headers)
+    data=r.json()
 
-    return route
+    if data:
+        return data[0]["lat"],data[0]["lon"]
+
+    return None,None

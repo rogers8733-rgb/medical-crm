@@ -2,10 +2,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Dashboard</h2>
+<h2>CRM Dashboard</h2>
 
 <div class="card">Accounts: {{total}}</div>
 <div class="card">Visits Due: {{due}}</div>
+
+<a class="btn" href="/geocode">Generate GPS Coordinates</a>
 
 <button class="btn" onclick="gps()">Referrals Near Me</button>
 
@@ -16,11 +18,11 @@
 
 <script>
 function gps(){
- navigator.geolocation.getCurrentPosition(function(pos){
-  document.getElementById("lat").value=pos.coords.latitude
-  document.getElementById("lon").value=pos.coords.longitude
-  document.getElementById("gpsForm").submit()
- })
+navigator.geolocation.getCurrentPosition(function(pos){
+document.getElementById("lat").value=pos.coords.latitude
+document.getElementById("lon").value=pos.coords.longitude
+document.getElementById("gpsForm").submit()
+})
 }
 </script>
 

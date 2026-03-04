@@ -2,29 +2,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Nearby Clinics</h2>
-
-<div id="map"></div>
+<h2>Nearby Offices</h2>
 
 {% for a in accounts %}
 <div class="card">
-{{a.name}} - {{a.dist}} miles<br>
-<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination={{a.lat}},{{a.lon}}">Navigate</a>
+{{a[0]}} - {{a[1]}} miles
 </div>
 {% endfor %}
-
-<script>
-var map=L.map('map').setView([{{lat}},{{lon}}],11)
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
-
-var heat=[]
-
-{% for a in accounts %}
-L.marker([{{a.lat}},{{a.lon}}]).addTo(map)
-heat.push([{{a.lat}},{{a.lon}},1])
-{% endfor %}
-
-L.heatLayer(heat).addTo(map)
-</script>
 
 {% endblock %}
