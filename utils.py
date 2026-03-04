@@ -11,24 +11,24 @@ def haversine(lat1,lon1,lat2,lon2):
     return R*c
 
 def geocode_address(address):
+
     url="https://nominatim.openstreetmap.org/search"
-    params={"q":address,"format":"json","limit":1}
-    headers={"User-Agent":"crm-territory-app"}
-    r=requests.get(url,params=params,headers=headers)
+
+    params={
+        "q":address,
+        "format":"json",
+        "limit":1
+    }
+
+    headers={
+        "User-Agent":"territory-crm-app"
+    }
+
+    r=requests.get(url,params=params,headers=headers,timeout=10)
+
     data=r.json()
+
     if data:
         return data[0]["lat"],data[0]["lon"]
+
     return None,None
-
-def optimize_route(start_lat,start_lon,points):
-    route=[]
-    current=(float(start_lat),float(start_lon))
-    remaining=points[:]
-
-    while remaining:
-        nearest=min(remaining,key=lambda p:haversine(current[0],current[1],p["lat"],p["lon"]))
-        route.append(nearest)
-        current=(nearest["lat"],nearest["lon"])
-        remaining.remove(nearest)
-
-    return route

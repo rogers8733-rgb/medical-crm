@@ -9,21 +9,4 @@
 
 <a class="btn" href="/geocode">Generate GPS Coordinates</a>
 
-<button class="btn" onclick="gps()">Today's Route</button>
-
-<form id="routeForm" method="POST" action="/daily-route">
-<input type="hidden" name="lat" id="lat">
-<input type="hidden" name="lon" id="lon">
-</form>
-
-<script>
-function gps(){
-navigator.geolocation.getCurrentPosition(function(pos){
-document.getElementById("lat").value=pos.coords.latitude
-document.getElementById("lon").value=pos.coords.longitude
-document.getElementById("routeForm").submit()
-})
-}
-</script>
-
 {% endblock %}
