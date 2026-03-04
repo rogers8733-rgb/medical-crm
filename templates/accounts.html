@@ -1,14 +1,12 @@
 
 {% extends "base.html" %}
 {% block content %}
-
 <h2>Accounts</h2>
-
 {% for a in accounts %}
 <div class="card">
 <b>{{a[1]}}</b><br>
-{{a[2]}} {{a[3]}}
+{{a[2]}} {{a[3]}}<br>
+<a href="/account/{{a[0]}}">Open</a>
 </div>
 {% endfor %}
-
 {% endblock %}

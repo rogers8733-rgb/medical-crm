@@ -2,11 +2,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Today's Optimized Route</h2>
+<h2>Top Referral Sources</h2>
 
-{% for a in accounts %}
+{% for r in rows %}
 <div class="card">
-{{loop.index}}. {{a.name}}
+<b>{{r[0]}}</b><br>
+Referrals: {{r[1]}}
 </div>
 {% endfor %}
 

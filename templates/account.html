@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<h2>{{office[1]}}</h2>
+
+<a class="btn" href="/visit/{{office[0]}}">Log Visit</a>
+
+<form action="/referral/{{office[0]}}" method="post">
+<select name="cat">
+<option>Complex Power</option>
+<option>Complex Manual</option>
+<option>Basic Power</option>
+<option>Scooter</option>
+</select>
+<button class="btn">Log Referral</button>
+</form>
+
+<h3>Visit History</h3>
+
+{% for v in visits %}
+<div class="card">
+<b>{{v[0]}}</b><br>
+{{v[1]}} – {{v[2]}}<br>
+{{v[3]}}
+</div>
+{% endfor %}
+
+{% endblock %}

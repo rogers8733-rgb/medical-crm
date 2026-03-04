@@ -1,9 +1,9 @@
 
 {
-"name":"Marketing CRM",
-"short_name":"CRM",
-"start_url":"/",
-"display":"standalone",
-"background_color":"#ffffff",
-"theme_color":"#1f2937"
+"name": "Territory CRM",
+"short_name": "CRM",
+"display": "standalone",
+"start_url": "/",
+"background_color": "#ffffff",
+"theme_color": "#007aff"
 }

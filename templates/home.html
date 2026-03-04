@@ -2,16 +2,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>CRM Dashboard</h2>
+<h2>Territory Dashboard</h2>
 
 <div class="card">Accounts: {{total}}</div>
-<div class="card">Visits Due: {{due}}</div>
+<div class="card">Visits Due Today: {{due}}</div>
 
 <a class="btn" href="/geocode">Generate GPS Coordinates</a>
 
-<button class="btn" onclick="gps()">Referrals Near Me</button>
+<button class="btn" onclick="gps()">Today's Route</button>
 
-<form id="gpsForm" method="POST" action="/near">
+<form id="routeForm" method="POST" action="/daily-route">
 <input type="hidden" name="lat" id="lat">
 <input type="hidden" name="lon" id="lon">
 </form>
@@ -21,7 +21,7 @@ function gps(){
 navigator.geolocation.getCurrentPosition(function(pos){
 document.getElementById("lat").value=pos.coords.latitude
 document.getElementById("lon").value=pos.coords.longitude
-document.getElementById("gpsForm").submit()
+document.getElementById("routeForm").submit()
 })
 }
 </script>

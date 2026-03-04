@@ -25,5 +25,25 @@ def init():
     )
     ''')
 
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS visits(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER,
+        date TEXT,
+        who TEXT,
+        visit_type TEXT,
+        notes TEXT
+    )
+    ''')
+
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS referrals(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER,
+        category TEXT,
+        date TEXT
+    )
+    ''')
+
     db.commit()
     db.close()
