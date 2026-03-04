@@ -2,31 +2,22 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Clinic Map</h2>
+<h2>Territory Map</h2>
 
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
-<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
 <script>
-var map=L.map('map').setView([34.7,-86.6],10)
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
-
-var markers=L.markerClusterGroup()
+var map=L.map('map').setView([34.7,-86.6],10);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 {% for r in rows %}
-var m=L.marker([{{r[2]}},{{r[3]}}])
-m.bindPopup("<b>{{r[1]}}</b><br><button onclick='visit({{r[0]}})'>Quick Visit</button>")
-markers.addLayer(m)
+
+var marker=L.marker([{{r[2]}},{{r[3]}}]).addTo(map);
+marker.bindPopup("<b>{{r[1]}}</b><br>{{r[4]}} {{r[5]}}<br><a href='/visit/{{r[0]}}'>Log Visit</a>");
+
 {% endfor %}
-
-map.addLayer(markers)
-
-function visit(id){
- fetch("/quickvisit/"+id,{method:"POST"}).then(()=>alert("Visit logged"))
-}
 </script>
 
 {% endblock %}

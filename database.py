@@ -9,8 +9,7 @@ def init():
     db=conn()
     c=db.cursor()
 
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS accounts(
+    c.execute('''CREATE TABLE IF NOT EXISTS accounts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         office_name TEXT,
         address TEXT,
@@ -19,21 +18,26 @@ def init():
         longitude REAL,
         classification TEXT,
         last_visit_date TEXT,
-        next_follow_up_date TEXT,
-        times_visited INTEGER DEFAULT 0
-    )
-    ''')
+        next_follow_up_date TEXT
+    )''')
 
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS visits(
+    c.execute('''CREATE TABLE IF NOT EXISTS visits(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         account_id INTEGER,
         date TEXT,
         who TEXT,
         visit_type TEXT,
         notes TEXT
-    )
-    ''')
+    )''')
+
+    c.execute('''CREATE TABLE IF NOT EXISTS referrals(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER,
+        patient TEXT,
+        category TEXT,
+        status TEXT,
+        date TEXT
+    )''')
 
     db.commit()
     db.close()

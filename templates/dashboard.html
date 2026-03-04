@@ -1,0 +1,25 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Territory Dashboard</h2>
+
+<div class="card">
+Total Accounts: {{total}}
+</div>
+
+<h3>Clinics Not Visited in 60 Days</h3>
+
+{% for r in overdue %}
+<div class="card">{{r[1]}}</div>
+{% endfor %}
+
+<h3>Top Referral Sources</h3>
+
+{% for r in top %}
+<div class="card">{{r[0]}} — {{r[1]}} referrals</div>
+{% endfor %}
+
+<a class="btn" href="/assistant">Open AI Territory Assistant</a>
+
+{% endblock %}

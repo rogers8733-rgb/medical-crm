@@ -9,7 +9,30 @@
 <div class="card">
 <b>{{a[1]}}</b><br>
 {{a[2]}} {{a[3]}}<br>
-<a href="/visit/{{a[0]}}">Log Visit</a>
+
+<a class="btn" href="/visit/{{a[0]}}">Log Visit</a>
+
+<form action="/referral/{{a[0]}}" method="post">
+
+<input name="patient" placeholder="Patient Name">
+
+<select name="category">
+<option>Complex Power</option>
+<option>Complex Manual</option>
+<option>Basic Power</option>
+<option>Scooter</option>
+</select>
+
+<select name="status">
+<option>Evaluation</option>
+<option>Order</option>
+<option>Delivered</option>
+</select>
+
+<button class="btn">Add Referral</button>
+
+</form>
+
 </div>
 
 {% endfor %}
