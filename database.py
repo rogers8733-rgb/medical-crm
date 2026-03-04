@@ -17,7 +17,7 @@ def init():
         latitude REAL,
         longitude REAL,
         classification TEXT,
-        active INTEGER DEFAULT 1,
+        active INTEGER DEFAULT 0,
         last_visit_date TEXT
     )''')
 
@@ -26,7 +26,6 @@ def init():
         account_id INTEGER,
         date TEXT,
         who TEXT,
-        visit_type TEXT,
         notes TEXT
     )''')
 

@@ -11,17 +11,22 @@ init()
 @app.route("/")
 def dashboard():
     db=conn()
-    total=db.execute("SELECT COUNT(*) FROM accounts WHERE active=1").fetchone()[0]
+
+    active=db.execute("SELECT COUNT(*) FROM accounts WHERE active=1").fetchone()[0]
+    potential=db.execute("SELECT COUNT(*) FROM accounts WHERE active=0").fetchone()[0]
 
     overdue=db.execute(
         "SELECT office_name FROM accounts WHERE active=1 AND (last_visit_date IS NULL OR last_visit_date<=date('now','-60 day'))"
     ).fetchall()
 
     db.close()
-    return render_template("dashboard.html",total=total,overdue=overdue)
+
+    return render_template("dashboard.html",active=active,potential=potential,overdue=overdue)
+
 
 @app.route("/assistant")
 def assistant():
+
     db=conn()
 
     suggestions=[]
@@ -34,7 +39,9 @@ def assistant():
         suggestions.append(f"Visit {o[0]} (not visited in 60+ days)")
 
     db.close()
+
     return render_template("assistant.html",suggestions=suggestions)
+
 
 @app.route("/accounts")
 def accounts():
@@ -43,37 +50,34 @@ def accounts():
     db.close()
     return render_template("accounts.html",accounts=rows)
 
-@app.route("/toggle/<id>")
-def toggle(id):
-    db=conn()
-    cur=db.cursor()
-    cur.execute("UPDATE accounts SET active = CASE active WHEN 1 THEN 0 ELSE 1 END WHERE id=?", (id,))
-    db.commit()
-    db.close()
-    return redirect("/accounts")
 
 @app.route("/visit/<id>",methods=["GET","POST"])
 def visit(id):
+
     if request.method=="POST":
+
         who=request.form["who"]
         notes=request.form["notes"]
 
         db=conn()
 
         db.execute(
-            "INSERT INTO visits(account_id,date,who,visit_type,notes) VALUES(?,?,?,?,?)",
-            (id,datetime.now().strftime("%Y-%m-%d"),who,"visit",notes)
+            "INSERT INTO visits(account_id,date,who,notes) VALUES(?,?,?,?)",
+            (id,datetime.now().strftime("%Y-%m-%d"),who,notes)
         )
 
         db.execute(
-            "UPDATE accounts SET last_visit_date=date('now') WHERE id=?",(id,)
+            "UPDATE accounts SET last_visit_date=date('now') WHERE id=?",
+            (id,)
         )
 
         db.commit()
         db.close()
+
         return redirect("/accounts")
 
     return render_template("visit.html",id=id)
+
 
 @app.route("/referral/<id>",methods=["POST"])
 def referral(id):
@@ -85,10 +89,17 @@ def referral(id):
         (id,request.form["patient"],request.form["category"],request.form["status"])
     )
 
+    # Automatically activate office when referral added
+    db.execute(
+        "UPDATE accounts SET active=1 WHERE id=?",
+        (id,)
+    )
+
     db.commit()
     db.close()
 
     return redirect("/accounts")
+
 
 @app.route("/nearby",methods=["POST"])
 def nearby():
@@ -115,14 +126,20 @@ def nearby():
 
     return render_template("nearby.html",rows=results)
 
+
 @app.route("/map")
 def map_view():
+
     db=conn()
+
     rows=db.execute(
-        "SELECT id,office_name,latitude,longitude,address,city FROM accounts WHERE active=1 AND latitude IS NOT NULL"
+        "SELECT office_name,latitude,longitude,address,city FROM accounts WHERE active=1 AND latitude IS NOT NULL"
     ).fetchall()
+
     db.close()
+
     return render_template("map.html",rows=rows)
+
 
 @app.route("/geocode")
 def geocode_all():
@@ -146,9 +163,12 @@ def geocode_all():
 
     return f"Geocoded {updated} offices"
 
+
 @app.route("/import",methods=["GET","POST"])
 def import_csv():
+
     if request.method=="POST":
+
         f=request.files["file"]
         reader=csv.DictReader(f.read().decode().splitlines())
 
@@ -156,12 +176,13 @@ def import_csv():
 
         for r in reader:
             db.execute(
-                "INSERT INTO accounts(office_name,address,city,classification,active) VALUES(?,?,?,?,1)",
+                "INSERT INTO accounts(office_name,address,city,classification,active) VALUES(?,?,?,?,0)",
                 (r.get("office_name"),r.get("address"),r.get("city"),r.get("classification","C"))
             )
 
         db.commit()
         db.close()
+
         return redirect("/accounts")
 
     return render_template("import.html")
