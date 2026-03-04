@@ -17,8 +17,8 @@ def init():
         latitude REAL,
         longitude REAL,
         classification TEXT,
-        last_visit_date TEXT,
-        next_follow_up_date TEXT
+        active INTEGER DEFAULT 1,
+        last_visit_date TEXT
     )''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS visits(

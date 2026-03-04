@@ -15,9 +15,11 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 {% for r in rows %}
 
 var marker=L.marker([{{r[2]}},{{r[3]}}]).addTo(map);
-marker.bindPopup("<b>{{r[1]}}</b><br>{{r[4]}} {{r[5]}}<br><a href='/visit/{{r[0]}}'>Log Visit</a>");
+
+marker.bindPopup("<b>{{r[1]}}</b><br>{{r[4]}} {{r[5]}}");
 
 {% endfor %}
+
 </script>
 
 {% endblock %}

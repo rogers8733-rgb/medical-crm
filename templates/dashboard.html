@@ -4,22 +4,31 @@
 
 <h2>Territory Dashboard</h2>
 
-<div class="card">
-Total Accounts: {{total}}
-</div>
+<div class="card">Active Accounts: {{total}}</div>
 
-<h3>Clinics Not Visited in 60 Days</h3>
+<h3>Clinics Not Visited 60+ Days</h3>
 
 {% for r in overdue %}
-<div class="card">{{r[1]}}</div>
+<div class="card">{{r[0]}}</div>
 {% endfor %}
 
-<h3>Top Referral Sources</h3>
+<button class="btn" onclick="near()">Referrals Near Me</button>
 
-{% for r in top %}
-<div class="card">{{r[0]}} — {{r[1]}} referrals</div>
-{% endfor %}
+<form id="nearform" method="POST" action="/nearby">
+<input type="hidden" id="lat" name="lat">
+<input type="hidden" id="lon" name="lon">
+</form>
 
-<a class="btn" href="/assistant">Open AI Territory Assistant</a>
+<a class="btn" href="/geocode">Generate GPS Coordinates</a>
+
+<script>
+function near(){
+navigator.geolocation.getCurrentPosition(function(pos){
+document.getElementById("lat").value=pos.coords.latitude
+document.getElementById("lon").value=pos.coords.longitude
+document.getElementById("nearform").submit()
+})
+}
+</script>
 
 {% endblock %}

@@ -7,14 +7,19 @@
 {% for a in accounts %}
 
 <div class="card">
+
 <b>{{a[1]}}</b><br>
 {{a[2]}} {{a[3]}}<br>
+
+Active: {{a[7]}} 
+
+<a class="btn" href="/toggle/{{a[0]}}">Toggle Active</a>
 
 <a class="btn" href="/visit/{{a[0]}}">Log Visit</a>
 
 <form action="/referral/{{a[0]}}" method="post">
 
-<input name="patient" placeholder="Patient Name">
+<input name="patient" placeholder="Patient">
 
 <select name="category">
 <option>Complex Power</option>
