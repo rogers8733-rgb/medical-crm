@@ -2,45 +2,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>Simple CRM</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
 </head>
-
 <body>
 
 <h1>Medical Territory CRM</h1>
 
 <form method="get">
-
 <input class="search" name="search" placeholder="Search office or city" value="{{search}}">
-
 <button class="blue-btn">Search</button>
-
 </form>
 
-<a href="/add">
-<button class="blue-btn big">Add New Account</button>
-</a>
+<a href="/add"><button class="blue-btn big">Add New Account</button></a>
+<a href="/import"><button class="blue-btn">Import CSV</button></a>
 
 {% for a in accounts %}
-
 <div class="card priority-{{a.classification}}">
-
 <h2>{{a.name}}</h2>
-
 <p>{{a.address}}</p>
-
 <p>{{a.city}}</p>
-
 <p>Priority: {{a.classification}}</p>
-
 </div>
-
 {% endfor %}
 
 </body>

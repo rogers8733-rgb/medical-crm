@@ -1,39 +1,24 @@
 
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>Add Account</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
 </head>
-
 <body>
 
 <h1>Add Account</h1>
 
 <form method="post">
-
 <input class="input" name="name" placeholder="Office Name">
-
 <input class="input" name="address" placeholder="Address">
-
 <input class="input" name="city" placeholder="City">
-
 <input class="input" name="classification" placeholder="Classification A/B/C/D">
-
 <button class="blue-btn big">Save Account</button>
-
 </form>
 
-<a href="/">
-<button class="blue-btn">Back</button>
-</a>
+<a href="/"><button class="blue-btn">Back</button></a>
 
 </body>
-
 </html>
