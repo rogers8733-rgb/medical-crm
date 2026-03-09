@@ -31,11 +31,18 @@ def append_csv(file, fields, row):
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writerow(row)
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def dashboard():
+    search = request.args.get("search","").lower()
+    accounts = read_csv(ACCOUNTS_FILE)
+
+    if search:
+        accounts = [a for a in accounts if search in a["name"].lower() or search in a["city"].lower()]
+
     referrals = read_csv(REFERRALS_FILE)[-5:]
     visits = read_csv(VISITS_FILE)[-5:]
-    return render_template("dashboard.html", referrals=referrals, visits=visits)
+
+    return render_template("dashboard.html", accounts=accounts, referrals=referrals, visits=visits, search=search)
 
 @app.route("/accounts")
 def accounts():
@@ -54,6 +61,20 @@ def add_account():
         append_csv(ACCOUNTS_FILE, ACCOUNT_FIELDS, data)
         return redirect("/accounts")
     return render_template("add_account.html")
+
+@app.route("/import", methods=["GET","POST"])
+def import_accounts():
+    if request.method == "POST":
+        file = request.files["file"]
+        if file:
+            rows = file.read().decode("utf-8").splitlines()
+            reader = csv.DictReader(rows)
+            with open(ACCOUNTS_FILE,"a",newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=ACCOUNT_FIELDS)
+                for row in reader:
+                    writer.writerow(row)
+        return redirect("/accounts")
+    return render_template("import.html")
 
 @app.route("/log_referral", methods=["GET","POST"])
 def log_referral():

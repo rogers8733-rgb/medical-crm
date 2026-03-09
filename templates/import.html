@@ -1,24 +1,17 @@
 
-<!DOCTYPE html>
 <html>
-<head>
-<title>Import CSV</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
 <body>
 
 <h1>Import Accounts CSV</h1>
 
-<p>CSV must use columns:</p>
-<p>name,address,city,classification</p>
-
 <form method="post" enctype="multipart/form-data">
 <input type="file" name="file">
-<button class="blue-btn big">Upload CSV</button>
+<br><br>
+<button type="submit">Upload</button>
 </form>
 
-<a href="/"><button class="blue-btn">Back</button></a>
+<p>CSV must have columns:</p>
+<p>name,address,city,classification</p>
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 
 body{font-family:Arial;margin:40px;}
-table{border-collapse:collapse;width:70%;}
-th,td{border:1px solid #ccc;padding:8px;}
+table{border-collapse:collapse;width:80%;margin-top:20px;}
+th,td{border:1px solid #ccc;padding:8px;text-align:left;}
 button{padding:10px;margin:5px;}
+input{padding:6px;}
