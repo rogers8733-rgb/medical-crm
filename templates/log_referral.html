@@ -1,32 +1,25 @@
 
 <html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/mobile_ui.css">
+</head>
 <body>
 
 <h1>Log Referral</h1>
-
 <form method="post">
-
-Account<br>
 <select name="account">
 {% for a in accounts %}
 <option>{{a.name}}</option>
 {% endfor %}
-</select><br>
-
-Referral Type<br>
+</select>
 <select name="type">
 <option>Standard Power Chair</option>
 <option>Scooter</option>
 <option>Complex Power Chair</option>
 <option>Complex Manual Chair</option>
-</select><br>
-
-Notes<br>
-<textarea name="notes"></textarea><br><br>
-
+</select>
+<textarea name="notes" placeholder="Notes"></textarea>
 <button type="submit">Save Referral</button>
-
 </form>
-
-</body>
-</html>

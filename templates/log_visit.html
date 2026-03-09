@@ -1,24 +1,19 @@
 
 <html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/mobile_ui.css">
+</head>
 <body>
 
 <h1>Log Visit</h1>
-
 <form method="post">
-
-Account<br>
 <select name="account">
 {% for a in accounts %}
 <option>{{a.name}}</option>
 {% endfor %}
-</select><br>
-
-Visit Notes<br>
-<textarea name="notes"></textarea><br><br>
-
+</select>
+<textarea name="notes" placeholder="Visit Notes"></textarea>
 <button type="submit">Save Visit</button>
-
 </form>
-
-</body>
-</html>

@@ -18,20 +18,20 @@ def init_file(file, fields):
             writer = csv.DictWriter(f, fieldnames=fields)
             writer.writeheader()
 
-init_file(ACCOUNTS_FILE, ACCOUNT_FIELDS)
-init_file(REFERRALS_FILE, REFERRAL_FIELDS)
-init_file(VISITS_FILE, VISIT_FIELDS)
-
 def read_csv(file):
     if not os.path.exists(file):
         return []
-    with open(file, newline="") as f:
+    with open(file,newline="") as f:
         return list(csv.DictReader(f))
 
 def append_csv(file, fields, row):
     with open(file,"a",newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writerow(row)
+
+init_file(ACCOUNTS_FILE, ACCOUNT_FIELDS)
+init_file(REFERRALS_FILE, REFERRAL_FIELDS)
+init_file(VISITS_FILE, VISIT_FIELDS)
 
 @app.route("/", methods=["GET"])
 def dashboard():
@@ -106,4 +106,5 @@ def log_visit():
     return render_template("log_visit.html", accounts=accounts)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)

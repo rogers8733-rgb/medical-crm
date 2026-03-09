@@ -1,21 +1,16 @@
 
 <html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/mobile_ui.css">
+</head>
 <body>
-<h1>Accounts</h1>
-<a href="/">Dashboard</a>
 
+<h1>Accounts</h1>
 <table>
 <tr><th>Name</th><th>Address</th><th>City</th><th>Class</th></tr>
-
 {% for a in accounts %}
-<tr>
-<td>{{a.name}}</td>
-<td>{{a.address}}</td>
-<td>{{a.city}}</td>
-<td>{{a.classification}}</td>
-</tr>
+<tr><td>{{a.name}}</td><td>{{a.address}}</td><td>{{a.city}}</td><td>{{a.classification}}</td></tr>
 {% endfor %}
-
 </table>
-</body>
-</html>

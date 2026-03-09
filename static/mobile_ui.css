@@ -1,0 +1,8 @@
+
+body{font-size:22px}
+h1{font-size:34px}
+input,select,textarea{width:100%;padding:20px;font-size:22px;margin-bottom:16px;border-radius:10px;border:1px solid #ccc}
+textarea{height:160px}
+button{padding:22px;font-size:24px}
+table{font-size:20px}
+th,td{padding:18px}

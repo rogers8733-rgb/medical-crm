@@ -1,19 +1,18 @@
 
 <html>
 <head>
-<link rel="stylesheet" href="/static/style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/mobile_ui.css">
 </head>
 <body>
 
 <h1>CRM Dashboard</h1>
 
-<form method="get" action="/">
-<input type="text" name="search" placeholder="Search accounts or city" value="{{search}}">
+<form method="get">
+<input name="search" placeholder="Search account or city" value="{{search}}">
 <button type="submit">Search</button>
 </form>
-
-<div class="menu">
 
 <a href="/accounts"><button>Accounts</button></a>
 <a href="/add_account"><button>Add Account</button></a>
@@ -21,42 +20,10 @@
 <a href="/log_referral"><button>Log Referral</button></a>
 <a href="/log_visit"><button>Log Visit</button></a>
 
-</div>
-
-<h2>Search Results</h2>
+<h2>Accounts</h2>
 <table>
 <tr><th>Name</th><th>City</th><th>Class</th></tr>
 {% for a in accounts %}
-<tr>
-<td>{{a.name}}</td>
-<td>{{a.city}}</td>
-<td>{{a.classification}}</td>
-</tr>
+<tr><td>{{a.name}}</td><td>{{a.city}}</td><td>{{a.classification}}</td></tr>
 {% endfor %}
 </table>
-
-<h2>Recent Referrals</h2>
-<table>
-<tr><th>Date</th><th>Account</th><th>Type</th></tr>
-{% for r in referrals %}
-<tr>
-<td>{{r.date}}</td>
-<td>{{r.account}}</td>
-<td>{{r.type}}</td>
-</tr>
-{% endfor %}
-</table>
-
-<h2>Recent Visits</h2>
-<table>
-<tr><th>Date</th><th>Account</th></tr>
-{% for v in visits %}
-<tr>
-<td>{{v.date}}</td>
-<td>{{v.account}}</td>
-</tr>
-{% endfor %}
-</table>
-
-</body>
-</html>
