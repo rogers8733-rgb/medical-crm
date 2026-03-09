@@ -2,9 +2,13 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
 from datetime import datetime
+import openpyxl
+import os
 
 app = Flask(__name__)
 DB = "crm.db"
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_conn():
     return sqlite3.connect(DB)
@@ -12,6 +16,7 @@ def get_conn():
 def init_db():
     conn = get_conn()
     c = conn.cursor()
+
     c.execute("""CREATE TABLE IF NOT EXISTS accounts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         office TEXT,
@@ -42,12 +47,12 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Ensure tables exist for Render/Gunicorn
 init_db()
 
-@app.route("/", methods=["GET"])
+@app.route("/")
 def dashboard():
     search = request.args.get("search","")
+
     conn = get_conn()
     c = conn.cursor()
 
@@ -74,7 +79,7 @@ def dashboard():
 @app.route("/add",methods=["GET","POST"])
 def add_account():
 
-    if request.method == "POST":
+    if request.method=="POST":
 
         data=(
         request.form["office"],
@@ -102,6 +107,37 @@ def add_account():
         return redirect("/")
 
     return render_template("add_account.html")
+
+
+@app.route("/import",methods=["GET","POST"])
+def import_excel():
+
+    if request.method=="POST":
+
+        file=request.files["file"]
+        path=os.path.join(UPLOAD_FOLDER,file.filename)
+        file.save(path)
+
+        wb=openpyxl.load_workbook(path)
+        sheet=wb.active
+
+        conn=get_conn()
+        c=conn.cursor()
+
+        for row in sheet.iter_rows(min_row=2,values_only=True):
+
+            c.execute("""
+            INSERT INTO accounts
+            (office,md,coordinator,phone,classification,last_visit,next_followup,notes)
+            VALUES (?,?,?,?,?,?,?,?)
+            """,row)
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/")
+
+    return render_template("import.html")
 
 
 @app.route("/visit/<int:id>",methods=["GET","POST"])

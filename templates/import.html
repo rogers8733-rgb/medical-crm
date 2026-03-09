@@ -1,12 +1,14 @@
 
-{% extends "base.html" %}
-{% block content %}
+<h2>Import Accounts from Excel</h2>
 
-<h2>Import Accounts</h2>
+<p>Required column order:</p>
+
+Office | MD | Coordinator | Phone | Classification | Last Visit | Next Follow Up | Notes
 
 <form method="post" enctype="multipart/form-data">
-<input type="file" name="file">
-<button class="btn">Upload</button>
-</form>
 
-{% endblock %}
+<input type="file" name="file">
+
+<button type="submit">Upload</button>
+
+</form>

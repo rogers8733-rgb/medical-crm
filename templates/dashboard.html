@@ -10,11 +10,12 @@
 <h1>Territory CRM</h1>
 
 <form method="get">
-<input name="search" placeholder="Search office, MD, or coordinator" value="{{search}}">
+<input name="search" placeholder="Search office, MD, coordinator" value="{{search}}">
 <button type="submit">Search</button>
 </form>
 
-<a href="/add">Add Account</a>
+<a href="/add">Add Account</a> |
+<a href="/import">Import Excel</a>
 
 <h2>Follow Ups Due</h2>
 
@@ -30,10 +31,10 @@
 
 </table>
 
-
 <h2>Accounts</h2>
 
 <table>
+
 <tr>
 <th>Office</th>
 <th>MD</th>
@@ -45,7 +46,8 @@
 
 {% for a in accounts %}
 
-<tr>
+<tr class="priority-{{a[5]}}">
+
 <td>{{a[1]}}</td>
 <td>{{a[2]}}</td>
 <td>{{a[5]}}</td>
@@ -53,8 +55,8 @@
 <td>{{a[7]}}</td>
 
 <td>
-<a href="/visit/{{a[0]}}">Log Visit</a>
-<a href="/referral/{{a[0]}}">Log Referral</a>
+<a href="/visit/{{a[0]}}">Visit</a>
+<a href="/referral/{{a[0]}}">Referral</a>
 </td>
 
 </tr>
