@@ -23,7 +23,9 @@ init_file(REFERRALS_FILE, REFERRAL_FIELDS)
 init_file(VISITS_FILE, VISIT_FIELDS)
 
 def read_csv(file):
-    with open(file,newline="") as f:
+    if not os.path.exists(file):
+        return []
+    with open(file, newline="") as f:
         return list(csv.DictReader(f))
 
 def append_csv(file, fields, row):
