@@ -1,0 +1,24 @@
+
+<html>
+<body>
+
+<h1>Log Visit</h1>
+
+<form method="post">
+
+Account<br>
+<select name="account">
+{% for a in accounts %}
+<option>{{a.name}}</option>
+{% endfor %}
+</select><br>
+
+Visit Notes<br>
+<textarea name="notes"></textarea><br><br>
+
+<button type="submit">Save Visit</button>
+
+</form>
+
+</body>
+</html>

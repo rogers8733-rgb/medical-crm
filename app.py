@@ -1,86 +1,86 @@
 
 from flask import Flask, render_template, request, redirect
-import csv
-import os
+import csv, os, datetime
 
-app = Flask(__name__, template_folder="templates", static_folder="static")
+app = Flask(__name__)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FILE = os.path.join(BASE_DIR, "accounts.csv")
-FIELDS = ["name","address","city","classification"]
+ACCOUNTS_FILE = "accounts.csv"
+REFERRALS_FILE = "referrals.csv"
+VISITS_FILE = "visits.csv"
 
-def init_file():
-    if not os.path.exists(FILE):
-        with open(FILE,"w",newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(FIELDS)
+ACCOUNT_FIELDS = ["name","address","city","classification"]
+REFERRAL_FIELDS = ["date","account","type","notes"]
+VISIT_FIELDS = ["date","account","notes"]
 
-def read_accounts():
-    accounts=[]
-    if os.path.exists(FILE):
-        with open(FILE,"r") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                accounts.append(row)
-    return accounts
+def init_file(file, fields):
+    if not os.path.exists(file):
+        with open(file,"w",newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fields)
+            writer.writeheader()
 
-def add_account_row(data):
-    with open(FILE,"a",newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(data)
+init_file(ACCOUNTS_FILE, ACCOUNT_FIELDS)
+init_file(REFERRALS_FILE, REFERRAL_FIELDS)
+init_file(VISITS_FILE, VISIT_FIELDS)
 
-@app.route("/",methods=["GET"])
+def read_csv(file):
+    with open(file,newline="") as f:
+        return list(csv.DictReader(f))
+
+def append_csv(file, fields, row):
+    with open(file,"a",newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writerow(row)
+
+@app.route("/")
 def dashboard():
-    init_file()
-    search=request.args.get("search","").lower()
+    referrals = read_csv(REFERRALS_FILE)[-5:]
+    visits = read_csv(VISITS_FILE)[-5:]
+    return render_template("dashboard.html", referrals=referrals, visits=visits)
 
-    accounts=read_accounts()
+@app.route("/accounts")
+def accounts():
+    accounts = read_csv(ACCOUNTS_FILE)
+    return render_template("accounts.html", accounts=accounts)
 
-    if search:
-        accounts=[a for a in accounts if search in a["name"].lower() or search in a["city"].lower()]
-
-    return render_template("dashboard.html",accounts=accounts,search=search)
-
-
-@app.route("/add",methods=["GET","POST"])
+@app.route("/add_account", methods=["GET","POST"])
 def add_account():
+    if request.method == "POST":
+        data = {
+            "name":request.form["name"],
+            "address":request.form["address"],
+            "city":request.form["city"],
+            "classification":request.form["classification"]
+        }
+        append_csv(ACCOUNTS_FILE, ACCOUNT_FIELDS, data)
+        return redirect("/accounts")
+    return render_template("add_account.html")
 
-    if request.method=="POST":
-
-        name=request.form["name"]
-        address=request.form["address"]
-        city=request.form["city"]
-        classification=request.form["classification"]
-
-        add_account_row([name,address,city,classification])
-
+@app.route("/log_referral", methods=["GET","POST"])
+def log_referral():
+    accounts = read_csv(ACCOUNTS_FILE)
+    if request.method == "POST":
+        data = {
+            "date":str(datetime.date.today()),
+            "account":request.form["account"],
+            "type":request.form["type"],
+            "notes":request.form["notes"]
+        }
+        append_csv(REFERRALS_FILE, REFERRAL_FIELDS, data)
         return redirect("/")
+    return render_template("log_referral.html", accounts=accounts)
 
-    return render_template("add.html")
-
-
-@app.route("/import",methods=["GET","POST"])
-def import_csv():
-
-    if request.method=="POST":
-
-        file=request.files["file"]
-
-        if file:
-            stream=file.stream.read().decode("UTF8").splitlines()
-            reader=csv.reader(stream)
-
-            rows=list(reader)
-
-            with open(FILE,"w",newline="") as f:
-                writer=csv.writer(f)
-                writer.writerows(rows)
-
+@app.route("/log_visit", methods=["GET","POST"])
+def log_visit():
+    accounts = read_csv(ACCOUNTS_FILE)
+    if request.method == "POST":
+        data = {
+            "date":str(datetime.date.today()),
+            "account":request.form["account"],
+            "notes":request.form["notes"]
+        }
+        append_csv(VISITS_FILE, VISIT_FIELDS, data)
         return redirect("/")
+    return render_template("log_visit.html", accounts=accounts)
 
-    return render_template("import.html")
-
-
-if __name__=="__main__":
-    port=int(os.environ.get("PORT",10000))
-    app.run(host="0.0.0.0",port=port)
+if __name__ == "__main__":
+    app.run(debug=True, port=10000)

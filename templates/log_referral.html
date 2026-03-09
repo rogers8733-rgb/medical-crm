@@ -1,0 +1,32 @@
+
+<html>
+<body>
+
+<h1>Log Referral</h1>
+
+<form method="post">
+
+Account<br>
+<select name="account">
+{% for a in accounts %}
+<option>{{a.name}}</option>
+{% endfor %}
+</select><br>
+
+Referral Type<br>
+<select name="type">
+<option>Standard Power Chair</option>
+<option>Scooter</option>
+<option>Complex Power Chair</option>
+<option>Complex Manual Chair</option>
+</select><br>
+
+Notes<br>
+<textarea name="notes"></textarea><br><br>
+
+<button type="submit">Save Referral</button>
+
+</form>
+
+</body>
+</html>

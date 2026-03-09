@@ -1,20 +1,30 @@
 
-{% extends "base.html" %}
-{% block content %}
+<html>
+<head>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
 
-<h2>Accounts</h2>
+<h1>Accounts</h1>
+<a href="/">Dashboard</a>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>City</th>
+<th>Class</th>
+</tr>
 
 {% for a in accounts %}
-
-<div class="card">
-<b>{{a[1]}}</b> ({{a[4]}})<br>
-{{a[2]}} {{a[3]}}<br>
-
-<a class="btn" href="/visit/{{a[0]}}">Log Visit</a>
-<a class="btn" href="/referral/{{a[0]}}">Log Referral</a>
-
-</div>
-
+<tr>
+<td>{{a.name}}</td>
+<td>{{a.address}}</td>
+<td>{{a.city}}</td>
+<td>{{a.classification}}</td>
+</tr>
 {% endfor %}
 
-{% endblock %}
+</table>
+</body>
+</html>
