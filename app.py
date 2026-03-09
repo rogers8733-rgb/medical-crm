@@ -1,86 +1,108 @@
 
-from flask import Flask,render_template,request,redirect
-from database import conn,init
+from flask import Flask, render_template, request, redirect
+import sqlite3
 from datetime import datetime
-import csv
 
-app=Flask(__name__)
-init()
+app = Flask(__name__)
+DB = "crm.db"
 
-@app.route("/")
+def init_db():
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS accounts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        office TEXT,
+        md TEXT,
+        coordinator TEXT,
+        phone TEXT,
+        classification TEXT,
+        last_visit TEXT,
+        next_followup TEXT,
+        notes TEXT
+    )''')
+    c.execute('''CREATE TABLE IF NOT EXISTS visits (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER,
+        date TEXT,
+        notes TEXT
+    )''')
+    c.execute('''CREATE TABLE IF NOT EXISTS referrals (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER,
+        patient TEXT,
+        date TEXT,
+        notes TEXT
+    )''')
+    conn.commit()
+    conn.close()
+
+@app.route("/", methods=["GET"])
 def dashboard():
-    db=conn()
-    accounts=db.execute("SELECT COUNT(*) FROM accounts").fetchone()[0]
-    visits=db.execute("SELECT COUNT(*) FROM visits").fetchone()[0]
-    referrals=db.execute("SELECT COUNT(*) FROM referrals").fetchone()[0]
-    db.close()
-    return render_template("dashboard.html",accounts=accounts,visits=visits,referrals=referrals)
+    search = request.args.get("search","")
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
 
-@app.route("/accounts")
-def accounts():
-    db=conn()
-    rows=db.execute("SELECT * FROM accounts ORDER BY name").fetchall()
-    db.close()
-    return render_template("accounts.html",accounts=rows)
+    if search:
+        c.execute("SELECT * FROM accounts WHERE office LIKE ?", ('%'+search+'%',))
+    else:
+        c.execute("SELECT * FROM accounts")
 
-@app.route("/add_account",methods=["GET","POST"])
+    accounts = c.fetchall()
+
+    today = datetime.today().strftime("%Y-%m-%d")
+    c.execute("SELECT * FROM accounts WHERE next_followup <= ?", (today,))
+    followups = c.fetchall()
+
+    conn.close()
+    return render_template("dashboard.html", accounts=accounts, followups=followups, search=search)
+
+@app.route("/add", methods=["GET","POST"])
 def add_account():
-    if request.method=="POST":
-        db=conn()
-        db.execute(
-            "INSERT INTO accounts(name,address,city,classification) VALUES(?,?,?,?)",
-            (request.form["name"],request.form["address"],request.form["city"],request.form["classification"])
+    if request.method == "POST":
+        data = (
+            request.form["office"],
+            request.form["md"],
+            request.form["coordinator"],
+            request.form["phone"],
+            request.form["classification"],
+            request.form["last_visit"],
+            request.form["next_followup"],
+            request.form["notes"]
         )
-        db.commit()
-        db.close()
-        return redirect("/accounts")
+        conn = sqlite3.connect(DB)
+        c = conn.cursor()
+        c.execute("INSERT INTO accounts (office,md,coordinator,phone,classification,last_visit,next_followup,notes) VALUES (?,?,?,?,?,?,?,?)", data)
+        conn.commit()
+        conn.close()
+        return redirect("/")
+
     return render_template("add_account.html")
 
-@app.route("/visit/<id>",methods=["GET","POST"])
-def visit(id):
-    if request.method=="POST":
-        db=conn()
-        db.execute(
-            "INSERT INTO visits(account_id,date,who,notes) VALUES(?,?,?,?)",
-            (id,datetime.now().strftime("%Y-%m-%d"),request.form["who"],request.form["notes"])
-        )
-        db.commit()
-        db.close()
-        return redirect("/accounts")
-    return render_template("visit.html",id=id)
+@app.route("/visit/<int:id>", methods=["GET","POST"])
+def log_visit(id):
+    if request.method == "POST":
+        conn = sqlite3.connect(DB)
+        c = conn.cursor()
+        c.execute("INSERT INTO visits (account_id,date,notes) VALUES (?,?,?)",
+                  (id, request.form["date"], request.form["notes"]))
+        c.execute("UPDATE accounts SET last_visit=? WHERE id=?", (request.form["date"], id))
+        conn.commit()
+        conn.close()
+        return redirect("/")
+    return render_template("visit.html", id=id)
 
-@app.route("/referral/<id>",methods=["GET","POST"])
-def referral(id):
-    if request.method=="POST":
-        db=conn()
-        db.execute(
-            "INSERT INTO referrals(account_id,date,category,notes) VALUES(?,?,?,?)",
-            (id,datetime.now().strftime("%Y-%m-%d"),request.form["category"],request.form["notes"])
-        )
-        db.commit()
-        db.close()
-        return redirect("/accounts")
-    return render_template("referral.html",id=id)
+@app.route("/referral/<int:id>", methods=["GET","POST"])
+def log_referral(id):
+    if request.method == "POST":
+        conn = sqlite3.connect(DB)
+        c = conn.cursor()
+        c.execute("INSERT INTO referrals (account_id,patient,date,notes) VALUES (?,?,?,?)",
+                  (id, request.form["patient"], request.form["date"], request.form["notes"]))
+        conn.commit()
+        conn.close()
+        return redirect("/")
+    return render_template("referral.html", id=id)
 
-@app.route("/map")
-def map_view():
-    db=conn()
-    rows=db.execute("SELECT name,latitude,longitude,address,city FROM accounts WHERE latitude IS NOT NULL").fetchall()
-    db.close()
-    return render_template("map.html",rows=rows)
-
-@app.route("/import",methods=["GET","POST"])
-def import_csv():
-    if request.method=="POST":
-        f=request.files["file"]
-        reader=csv.DictReader(f.read().decode().splitlines())
-        db=conn()
-        for r in reader:
-            db.execute(
-                "INSERT INTO accounts(name,address,city,classification) VALUES(?,?,?,?)",
-                (r.get("name"),r.get("address"),r.get("city"),r.get("classification","C"))
-            )
-        db.commit()
-        db.close()
-        return redirect("/accounts")
-    return render_template("import.html")
+if __name__ == "__main__":
+    init_db()
+    app.run(debug=True)

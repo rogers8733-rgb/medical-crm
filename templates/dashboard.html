@@ -1,14 +1,57 @@
 
-{% extends "base.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>CRM Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
 
-<h2>CRM Dashboard</h2>
+<h1>Marketing CRM</h1>
 
-<div class="card">Accounts: {{accounts}}</div>
-<div class="card">Visits Logged: {{visits}}</div>
-<div class="card">Referrals: {{referrals}}</div>
+<form method="get" action="/">
+<input type="text" name="search" placeholder="Search office..." value="{{search}}">
+<button type="submit">Search</button>
+</form>
 
-<a class="btn" href="/add_account">Add Account</a>
-<a class="btn" href="/accounts">View Accounts</a>
+<a href="/add">Add Account</a>
 
-{% endblock %}
+<h2>Follow Ups Due</h2>
+<table>
+<tr><th>Office</th><th>Next Follow Up</th></tr>
+{% for a in followups %}
+<tr>
+<td>{{a[1]}}</td>
+<td>{{a[7]}}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h2>Accounts</h2>
+<table>
+<tr>
+<th>Office</th>
+<th>MD</th>
+<th>Class</th>
+<th>Last Visit</th>
+<th>Next Follow Up</th>
+<th>Actions</th>
+</tr>
+
+{% for a in accounts %}
+<tr>
+<td>{{a[1]}}</td>
+<td>{{a[2]}}</td>
+<td>{{a[5]}}</td>
+<td>{{a[6]}}</td>
+<td>{{a[7]}}</td>
+<td>
+<a href="/visit/{{a[0]}}">Log Visit</a>
+<a href="/referral/{{a[0]}}">Log Referral</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+</body>
+</html>

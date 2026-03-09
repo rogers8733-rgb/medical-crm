@@ -1,22 +1,8 @@
 
-{% extends "base.html" %}
-{% block content %}
-
 <h2>Log Referral</h2>
-
 <form method="post">
-
-<select name="category">
-<option>Custom Power</option>
-<option>Custom Manual</option>
-<option>Scooter</option>
-<option>Standard Power</option>
-</select>
-
-<textarea name="notes" placeholder="Referral notes"></textarea>
-
-<button class="btn">Save Referral</button>
-
+Patient Name <input name="patient"><br>
+Date <input name="date"><br>
+Notes <input name="notes"><br>
+<button type="submit">Save Referral</button>
 </form>
-
-{% endblock %}
