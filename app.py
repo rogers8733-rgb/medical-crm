@@ -1,79 +1,44 @@
 
 from flask import Flask, render_template, request, redirect
-import sqlite3
-from datetime import datetime
-import openpyxl
+import csv
 import os
 
 app = Flask(__name__)
-DB = "crm.db"
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-def get_conn():
-    return sqlite3.connect(DB)
+FILE = "accounts.csv"
+FIELDS = ["name","address","city","classification"]
 
-def init_db():
-    conn = get_conn()
-    c = conn.cursor()
+def init_file():
+    if not os.path.exists(FILE):
+        with open(FILE,"w",newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(FIELDS)
 
-    c.execute("""CREATE TABLE IF NOT EXISTS accounts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        office TEXT,
-        md TEXT,
-        coordinator TEXT,
-        phone TEXT,
-        classification TEXT,
-        last_visit TEXT,
-        next_followup TEXT,
-        notes TEXT
-    )""")
+def read_accounts():
+    accounts=[]
+    if os.path.exists(FILE):
+        with open(FILE,"r") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                accounts.append(row)
+    return accounts
 
-    c.execute("""CREATE TABLE IF NOT EXISTS visits (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        account_id INTEGER,
-        date TEXT,
-        notes TEXT
-    )""")
+def add_account_row(data):
+    with open(FILE,"a",newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(data)
 
-    c.execute("""CREATE TABLE IF NOT EXISTS referrals (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        account_id INTEGER,
-        patient TEXT,
-        date TEXT,
-        notes TEXT
-    )""")
-
-    conn.commit()
-    conn.close()
-
-init_db()
-
-@app.route("/")
+@app.route("/",methods=["GET"])
 def dashboard():
-    search = request.args.get("search","")
+    init_file()
+    search=request.args.get("search","").lower()
 
-    conn = get_conn()
-    c = conn.cursor()
+    accounts=read_accounts()
 
     if search:
-        q = "%" + search + "%"
-        c.execute("""
-        SELECT * FROM accounts
-        WHERE office LIKE ? OR md LIKE ? OR coordinator LIKE ?
-        """,(q,q,q))
-    else:
-        c.execute("SELECT * FROM accounts")
+        accounts=[a for a in accounts if search in a["name"].lower() or search in a["city"].lower()]
 
-    accounts = c.fetchall()
-
-    today = datetime.today().strftime("%Y-%m-%d")
-    c.execute("SELECT * FROM accounts WHERE next_followup != '' AND next_followup <= ?",(today,))
-    followups = c.fetchall()
-
-    conn.close()
-
-    return render_template("dashboard.html",accounts=accounts,followups=followups,search=search)
+    return render_template("dashboard.html",accounts=accounts,search=search)
 
 
 @app.route("/add",methods=["GET","POST"])
@@ -81,107 +46,19 @@ def add_account():
 
     if request.method=="POST":
 
-        data=(
-        request.form["office"],
-        request.form["md"],
-        request.form["coordinator"],
-        request.form["phone"],
-        request.form["classification"],
-        request.form["last_visit"],
-        request.form["next_followup"],
-        request.form["notes"]
-        )
+        name=request.form["name"]
+        address=request.form["address"]
+        city=request.form["city"]
+        classification=request.form["classification"]
 
-        conn=get_conn()
-        c=conn.cursor()
-
-        c.execute("""
-        INSERT INTO accounts
-        (office,md,coordinator,phone,classification,last_visit,next_followup,notes)
-        VALUES (?,?,?,?,?,?,?,?)
-        """,data)
-
-        conn.commit()
-        conn.close()
+        add_account_row([name,address,city,classification])
 
         return redirect("/")
 
-    return render_template("add_account.html")
-
-
-@app.route("/import",methods=["GET","POST"])
-def import_excel():
-
-    if request.method=="POST":
-
-        file=request.files["file"]
-        path=os.path.join(UPLOAD_FOLDER,file.filename)
-        file.save(path)
-
-        wb=openpyxl.load_workbook(path)
-        sheet=wb.active
-
-        conn=get_conn()
-        c=conn.cursor()
-
-        for row in sheet.iter_rows(min_row=2,values_only=True):
-
-            c.execute("""
-            INSERT INTO accounts
-            (office,md,coordinator,phone,classification,last_visit,next_followup,notes)
-            VALUES (?,?,?,?,?,?,?,?)
-            """,row)
-
-        conn.commit()
-        conn.close()
-
-        return redirect("/")
-
-    return render_template("import.html")
-
-
-@app.route("/visit/<int:id>",methods=["GET","POST"])
-def log_visit(id):
-
-    if request.method=="POST":
-
-        conn=get_conn()
-        c=conn.cursor()
-
-        c.execute("INSERT INTO visits (account_id,date,notes) VALUES (?,?,?)",
-        (id,request.form["date"],request.form["notes"]))
-
-        c.execute("UPDATE accounts SET last_visit=? WHERE id=?",
-        (request.form["date"],id))
-
-        conn.commit()
-        conn.close()
-
-        return redirect("/")
-
-    return render_template("visit.html",id=id)
-
-
-@app.route("/referral/<int:id>",methods=["GET","POST"])
-def log_referral(id):
-
-    if request.method=="POST":
-
-        conn=get_conn()
-        c=conn.cursor()
-
-        c.execute("INSERT INTO referrals (account_id,patient,date,notes) VALUES (?,?,?,?)",
-        (id,request.form["patient"],request.form["date"],request.form["notes"]))
-
-        conn.commit()
-        conn.close()
-
-        return redirect("/")
-
-    return render_template("referral.html",id=id)
+    return render_template("add.html")
 
 
 if __name__=="__main__":
     import os
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    port=int(os.environ.get("PORT",10000))
+    app.run(host="0.0.0.0",port=port)

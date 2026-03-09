@@ -2,68 +2,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Territory CRM</title>
-<link rel="stylesheet" href="/static/style.css">
+
+<title>Simple CRM</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
+
 <body>
 
-<h1>Territory CRM</h1>
+<h1>Medical Territory CRM</h1>
 
 <form method="get">
-<input name="search" placeholder="Search office, MD, coordinator" value="{{search}}">
-<button type="submit">Search</button>
+
+<input class="search" name="search" placeholder="Search office or city" value="{{search}}">
+
+<button class="blue-btn">Search</button>
+
 </form>
 
-<a href="/add">Add Account</a> |
-<a href="/import">Import Excel</a>
-
-<h2>Follow Ups Due</h2>
-
-<table>
-<tr><th>Office</th><th>Next Follow Up</th></tr>
-
-{% for f in followups %}
-<tr>
-<td>{{f[1]}}</td>
-<td>{{f[7]}}</td>
-</tr>
-{% endfor %}
-
-</table>
-
-<h2>Accounts</h2>
-
-<table>
-
-<tr>
-<th>Office</th>
-<th>MD</th>
-<th>Class</th>
-<th>Last Visit</th>
-<th>Next Follow Up</th>
-<th>Actions</th>
-</tr>
+<a href="/add">
+<button class="blue-btn big">Add New Account</button>
+</a>
 
 {% for a in accounts %}
 
-<tr class="priority-{{a[5]}}">
+<div class="card priority-{{a.classification}}">
 
-<td>{{a[1]}}</td>
-<td>{{a[2]}}</td>
-<td>{{a[5]}}</td>
-<td>{{a[6]}}</td>
-<td>{{a[7]}}</td>
+<h2>{{a.name}}</h2>
 
-<td>
-<a href="/visit/{{a[0]}}">Visit</a>
-<a href="/referral/{{a[0]}}">Referral</a>
-</td>
+<p>{{a.address}}</p>
 
-</tr>
+<p>{{a.city}}</p>
+
+<p>Priority: {{a.classification}}</p>
+
+</div>
 
 {% endfor %}
-
-</table>
 
 </body>
 </html>

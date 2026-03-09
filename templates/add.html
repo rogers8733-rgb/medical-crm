@@ -1,31 +1,39 @@
 
-<html><head>
-<style>
-body{font-family:Arial;margin:20px;max-width:650px;}
-.btn{display:block;width:100%;padding:18px;margin:10px 0;font-size:20px;border-radius:10px;background:#1976d2;color:white;text-align:center;text-decoration:none;}
-input,select,textarea{width:100%;padding:12px;margin:8px 0;font-size:16px;}
-.card{border:1px solid #ddd;padding:15px;margin-bottom:12px;border-radius:8px;}
-</style>
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Add Account</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
+
 <body>
-<a href="/">Home</a>
-<h2>Add Office</h2>
 
-<form method="POST">
-<input name="office" placeholder="Office Name">
-<input name="phone" placeholder="Phone">
-<input name="address" placeholder="Address">
+<h1>Add Account</h1>
 
-<select name="rank">
-<option value="A">A</option>
-<option value="B">B</option>
-<option value="C" selected>C</option>
-<option value="D">D</option>
-</select>
+<form method="post">
 
-<textarea name="notes" placeholder="Notes"></textarea>
+<input class="input" name="name" placeholder="Office Name">
 
-<button class="btn">Save</button>
+<input class="input" name="address" placeholder="Address">
+
+<input class="input" name="city" placeholder="City">
+
+<input class="input" name="classification" placeholder="Classification A/B/C/D">
+
+<button class="blue-btn big">Save Account</button>
+
 </form>
 
-</body></html>
+<a href="/">
+<button class="blue-btn">Back</button>
+</a>
+
+</body>
+
+</html>
