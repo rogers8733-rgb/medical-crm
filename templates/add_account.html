@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Add Account</h2>
+
+<form method="post">
+
+<input name="name" placeholder="Office Name">
+<input name="address" placeholder="Address">
+<input name="city" placeholder="City">
+
+<select name="classification">
+<option>A</option>
+<option>B</option>
+<option>C</option>
+<option>D</option>
+</select>
+
+<button class="btn">Save Account</button>
+
+</form>
+
+{% endblock %}

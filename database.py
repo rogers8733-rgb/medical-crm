@@ -11,14 +11,12 @@ def init():
 
     c.execute('''CREATE TABLE IF NOT EXISTS accounts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        office_name TEXT,
+        name TEXT,
         address TEXT,
         city TEXT,
-        latitude REAL,
-        longitude REAL,
         classification TEXT,
-        active INTEGER DEFAULT 0,
-        last_visit_date TEXT
+        latitude REAL,
+        longitude REAL
     )''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS visits(
@@ -32,10 +30,9 @@ def init():
     c.execute('''CREATE TABLE IF NOT EXISTS referrals(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         account_id INTEGER,
-        patient TEXT,
+        date TEXT,
         category TEXT,
-        status TEXT,
-        date TEXT
+        notes TEXT
     )''')
 
     db.commit()

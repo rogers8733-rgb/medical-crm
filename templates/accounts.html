@@ -7,33 +7,11 @@
 {% for a in accounts %}
 
 <div class="card">
-
-<b>{{a[1]}}</b><br>
+<b>{{a[1]}}</b> ({{a[4]}})<br>
 {{a[2]}} {{a[3]}}<br>
 
-<form action="/referral/{{a[0]}}" method="post">
-
-<input name="who" placeholder="Who you spoke with">
-<input name="patient" placeholder="Patient">
-
-<select name="category">
-<option>Complex Power</option>
-<option>Complex Manual</option>
-<option>Basic Power</option>
-<option>Scooter</option>
-</select>
-
-<select name="status">
-<option>Evaluation</option>
-<option>Order</option>
-<option>Delivered</option>
-</select>
-
-<textarea name="notes" placeholder="Visit notes"></textarea>
-
-<button class="btn">Log Visit + Referral</button>
-
-</form>
+<a class="btn" href="/visit/{{a[0]}}">Log Visit</a>
+<a class="btn" href="/referral/{{a[0]}}">Log Referral</a>
 
 </div>
 

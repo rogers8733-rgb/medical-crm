@@ -8,22 +8,10 @@
 
 <input name="who" placeholder="Who you spoke with">
 
-<textarea id="notes" name="notes"></textarea>
-
-<button type="button" onclick="voice()">🎤 Voice Notes</button>
+<textarea name="notes" placeholder="Visit notes"></textarea>
 
 <button class="btn">Save Visit</button>
 
 </form>
-
-<script>
-function voice(){
-var r=new webkitSpeechRecognition();
-r.onresult=function(e){
-document.getElementById("notes").value=e.results[0][0].transcript;
-}
-r.start();
-}
-</script>
 
 {% endblock %}

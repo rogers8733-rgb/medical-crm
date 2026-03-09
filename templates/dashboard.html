@@ -2,32 +2,13 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Territory Dashboard</h2>
+<h2>CRM Dashboard</h2>
 
-<div class="card">Active Referral Sources: {{active}}</div>
-<div class="card">Potential Offices: {{potential}}</div>
+<div class="card">Accounts: {{accounts}}</div>
+<div class="card">Visits Logged: {{visits}}</div>
+<div class="card">Referrals: {{referrals}}</div>
 
-<h3>Clinics Not Visited 60+ Days</h3>
-
-{% for r in overdue %}
-<div class="card">{{r[0]}}</div>
-{% endfor %}
-
-<button class="btn" onclick="near()">Referrals Near Me</button>
-
-<form id="nearform" method="POST" action="/nearby">
-<input type="hidden" id="lat" name="lat">
-<input type="hidden" id="lon" name="lon">
-</form>
-
-<script>
-function near(){
-navigator.geolocation.getCurrentPosition(function(pos){
-document.getElementById("lat").value=pos.coords.latitude
-document.getElementById("lon").value=pos.coords.longitude
-document.getElementById("nearform").submit()
-})
-}
-</script>
+<a class="btn" href="/add_account">Add Account</a>
+<a class="btn" href="/accounts">View Accounts</a>
 
 {% endblock %}
