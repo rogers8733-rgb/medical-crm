@@ -103,6 +103,7 @@ def log_referral(id):
         return redirect("/")
     return render_template("referral.html", id=id)
 
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)
